@@ -1,18 +1,13 @@
 import * as Option from "@adrielus/option";
 import {
   fromIterableSync,
-  stream,
   metaStream,
   pubsub,
+  stream,
   sync
 } from "@thi.ng/rstream";
 import * as tx from "@thi.ng/transducers";
-import {
-  Label,
-  PrimitiveLabels,
-  SVariableInstance,
-  SPrimitive
-} from "../types/Labels";
+import { Label, PrimitiveLabels, SVariableInstance } from "../types/Labels";
 import { SConnection, SInputPin, SNode, SOutputPin } from "../types/VGraph";
 
 const labelToString = (label: Label) => {

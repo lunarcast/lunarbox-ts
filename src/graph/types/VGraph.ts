@@ -1,6 +1,6 @@
+import { Option } from "@adrielus/option";
 import { Stream } from "@thi.ng/rstream";
-import { Option, None } from "@adrielus/option";
-import { SVariableInstance, SVariable, Label } from "./Labels";
+import { Label, SVariableInstance } from "./Labels";
 
 /**
  * Currently supported node kinds.

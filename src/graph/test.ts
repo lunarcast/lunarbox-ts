@@ -1,5 +1,5 @@
 import { Some } from "@adrielus/option";
-import { stream, Stream, trace } from "@thi.ng/rstream";
+import { stream, Stream } from "@thi.ng/rstream";
 import { initGraph } from "./helpers/initGraph";
 import { isOfType } from "./helpers/labelValidation";
 import { PrimitiveLabels, SVariableInstance } from "./types/Labels";
