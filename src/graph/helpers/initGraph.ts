@@ -1,13 +1,18 @@
 import * as Option from "@adrielus/option";
 import {
-  CloseMode,
+  fromIterableSync,
+  stream,
   metaStream,
   pubsub,
-  sync,
-  fromIterableSync
+  sync
 } from "@thi.ng/rstream";
 import * as tx from "@thi.ng/transducers";
-import { Label, SVariableInstance, PrimitiveLabels } from "../types/Labels";
+import {
+  Label,
+  PrimitiveLabels,
+  SVariableInstance,
+  SPrimitive
+} from "../types/Labels";
 import { SConnection, SInputPin, SNode, SOutputPin } from "../types/VGraph";
 
 const labelToString = (label: Label) => {
@@ -67,10 +72,7 @@ export const initGraph = (_module: SNode[]) => {
       all: true
     }).transform(tx.map(o => Object.values(o)));
 
-    const results = merged.transform(tx.map(node.transformation), {
-      closeIn: CloseMode.NEVER,
-      closeOut: CloseMode.NEVER
-    });
+    const results = merged.transform(tx.map(node.transformation));
 
     const indexedResults = results.subscribe(
       metaStream((inputs: SVariableInstance[]) =>
@@ -85,12 +87,12 @@ export const initGraph = (_module: SNode[]) => {
     indexedResults.subscribe(splitter);
 
     for (let index = 0; index < node.outputs.length; index++) {
-      splitter
-        .subscribeTopic(
-          index,
-          tx.map(v => v[1])
-        )
-        .subscribe(node.outputs[index]);
+      const pipe = stream<[number, SVariableInstance]>().transform(
+        tx.map(v => v[1])
+      );
+
+      splitter.subscribeTopic(index, pipe);
+      pipe.subscribe(node.outputs[index].source);
     }
   }
 };

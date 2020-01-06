@@ -1,5 +1,5 @@
 import { Some } from "@adrielus/option";
-import { stream, Stream } from "@thi.ng/rstream";
+import { stream, Stream, trace } from "@thi.ng/rstream";
 import { initGraph } from "./helpers/initGraph";
 import { isOfType } from "./helpers/labelValidation";
 import { PrimitiveLabels, SVariableInstance } from "./types/Labels";
@@ -29,14 +29,16 @@ const constantNode = <T extends SVariableInstance>(
 };
 
 const [a, sourceA] = constantNode({
-  type: PrimitiveLabels.string,
-  value: "1"
+  type: PrimitiveLabels.number,
+  value: 1
 });
 
 const [b, sourceB] = constantNode({
   type: PrimitiveLabels.number,
   value: 2
 });
+
+const adderSource = stream<any>();
 
 const adder: SNode = {
   kind: SNodeKinds.general,
@@ -60,7 +62,7 @@ const adder: SNode = {
   ],
   outputs: [
     {
-      source: stream(),
+      source: adderSource,
       computeOutputKind: () => PrimitiveLabels.number
     }
   ],
@@ -110,5 +112,3 @@ sourceA.next({
   value: 5,
   type: PrimitiveLabels.number
 });
-
-setTimeout(() => {}, 300);
