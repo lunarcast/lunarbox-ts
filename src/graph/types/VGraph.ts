@@ -14,7 +14,7 @@ export enum SNodeKinds {
 /**
  * Indicates what input pin an output pin is connected to.
  */
-type SConnection = {
+export type SConnection = {
   /**
    * The index of the input pin.
    */
@@ -49,6 +49,11 @@ export type SInputPin = {
    * Predicate to validate incoming types.
    */
   labelConstraint: (type: Label) => boolean;
+
+  /**
+   * For friendlier errors.
+   */
+  labelName?: string;
 };
 
 /**
@@ -58,13 +63,18 @@ export type SOutputPin = {
   /**
    * Method to compute the output type based on the input ones.
    */
-  computeOutputType: (inputTypes: Label[]) => Label;
+  computeOutputKind: (inputTypes: Label[]) => Label;
+
+  /**
+   * Stream pusing the latest values.
+   */
+  source: Stream<SVariableInstance>;
 };
 
 export interface SNode {
   transformation: (inputs: SVariableInstance[]) => SVariableInstance[];
-  inputs?: Option<SInputPin>[];
-  outputs?: Stream<SOutputPin>[];
+  inputs: SInputPin[];
+  outputs: SOutputPin[];
   kind: SNodeKinds;
 }
 

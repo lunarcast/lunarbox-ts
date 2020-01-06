@@ -1,66 +1,114 @@
-import {
-  VfpModule,
-  VfpNodeType,
-  VfpValue,
-  VfpInput,
-  VfpGeneralNode,
-  VfpPinPointer,
-  VfpOutput
-} from "./types";
-import { stream, Stream } from "@thi.ng/rstream";
 import { Some } from "@adrielus/option";
-import { initGraph } from "./initGraph";
+import { stream, Stream } from "@thi.ng/rstream";
+import { initGraph } from "./helpers/initGraph";
+import { isOfType } from "./helpers/labelValidation";
+import { PrimitiveLabels, SVariableInstance } from "./types/Labels";
+import { SNode, SNodeKinds } from "./types/VGraph";
 
-const constantNode = <T extends VfpValue>(
+const constantNode = <T extends SVariableInstance>(
   value: T
-): [VfpInput, Stream<VfpValue>] => {
-  const output = stream<T>();
-
-  output.next(value);
+): [SNode, Stream<SVariableInstance>] => {
+  const output = stream<T>(s => {
+    s.next(value);
+  });
 
   return [
     {
-      type: VfpNodeType.input,
+      kind: SNodeKinds.input,
       transformation: v => v,
       inputs: [],
-      outputs: [output]
+      outputs: [
+        {
+          source: output,
+          computeOutputKind: () => value.type
+        }
+      ]
     },
     output
   ];
 };
 
-const [a, sourceA] = constantNode(1);
+const [a, sourceA] = constantNode({
+  type: PrimitiveLabels.string,
+  value: "1"
+});
 
-const adder: VfpGeneralNode = {
-  type: VfpNodeType.general,
+const [b, sourceB] = constantNode({
+  type: PrimitiveLabels.number,
+  value: 2
+});
+
+const adder: SNode = {
+  kind: SNodeKinds.general,
   inputs: [
-    Some<VfpPinPointer>({
-      node: () => a,
-      index: 0
-    }),
-    Some<VfpPinPointer>({
-      node: () => adder,
-      index: 0
-    })
+    {
+      connection: Some({
+        node: () => a,
+        index: 0
+      }),
+      labelConstraint: isOfType(PrimitiveLabels.number),
+      labelName: "number"
+    },
+    {
+      connection: Some({
+        node: () => b,
+        index: 0
+      }),
+      labelConstraint: isOfType(PrimitiveLabels.number),
+      labelName: "number"
+    }
   ],
-  outputs: [stream(s => s.next(1))],
-  transformation: inputs => [inputs.reduce((a, b) => a + b, 0)]
+  outputs: [
+    {
+      source: stream(),
+      computeOutputKind: () => PrimitiveLabels.number
+    }
+  ],
+  transformation: inputs => [
+    {
+      type: PrimitiveLabels.number,
+      value: inputs.reduce((a, b) => {
+        if (b.type !== PrimitiveLabels.number) {
+          throw new Error("something went wrong");
+        }
+
+        return a + b.value;
+      }, 0)
+    }
+  ]
 };
 
-const output: VfpOutput = {
-  type: VfpNodeType.output,
+const output: SNode = {
+  kind: SNodeKinds.output,
   inputs: [
-    Some({
-      node: () => adder,
-      index: 0
-    })
+    {
+      connection: Some({
+        node: () => adder,
+        index: 0
+      }),
+      labelConstraint: () => true,
+      labelName: "anything"
+    }
   ],
   outputs: [],
-  transformation: inputs => (console.log(inputs), [])
+  transformation: inputs => {
+    console.log(inputs);
+    return [];
+  }
 };
 
-const graph: VfpModule = {
-  nodes: [a, adder, output]
-};
+const graph = [a, b, adder, output];
 
 initGraph(graph);
+
+sourceB.next({
+  value: 7,
+  type: PrimitiveLabels.number
+});
+
+sourceA.next({
+  value: 5,
+  type: PrimitiveLabels.number
+});
+
+setTimeout(() => {}, 300);

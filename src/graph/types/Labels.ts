@@ -31,9 +31,9 @@ export type LabelToType<T extends Label> = {
  */
 export type LabelToSVariable<T extends Label> = SVariable<T, LabelToType<T>>;
 
-type SNumber = LabelToSVariable<PrimitiveLabels.boolean>;
-type SString = LabelToSVariable<PrimitiveLabels.string>;
-type SBoolean = LabelToSVariable<PrimitiveLabels.boolean>;
+export type SNumber = LabelToSVariable<PrimitiveLabels.number>;
+export type SString = LabelToSVariable<PrimitiveLabels.string>;
+export type SBoolean = LabelToSVariable<PrimitiveLabels.boolean>;
 
 // Primitives can be either of those 3
 export type SPrimitive = SNumber | SString | SBoolean;
