@@ -1,114 +1,117 @@
-import { Some } from "@adrielus/option";
-import { stream, Stream } from "@thi.ng/rstream";
-import { initGraph } from "./helpers/initGraph";
-import { isOfType } from "./helpers/labelValidation";
-import { PrimitiveLabels, SVariableInstance } from "./types/Labels";
-import { SNode, SNodeKinds } from "./types/VGraph";
+import { Some } from '@adrielus/option'
+import { stream, Stream } from '@thi.ng/rstream'
+import { initGraph } from './helpers/initGraph'
+import { isOfLabel } from './helpers/labelValidation'
+import { Label, SVariableInstance, SNumber } from './types/Labels'
+import { SNode, SNodeKinds } from './types/VGraph'
 
 const constantNode = <T extends SVariableInstance>(
-  value: T
+    value: T
 ): [SNode, Stream<SVariableInstance>] => {
-  const output = stream<T>(s => {
-    s.next(value);
-  });
+    const output = stream<T>(s => {
+        s.next(value)
+    })
 
-  return [
-    {
-      kind: SNodeKinds.input,
-      transformation: v => v,
-      inputs: [],
-      outputs: [
+    return [
         {
-          source: output,
-          computeOutputKind: () => value.type
-        }
-      ]
-    },
-    output
-  ];
-};
+            kind: SNodeKinds.input,
+            transformation: v => v,
+            inputs: [],
+            outputs: [
+                {
+                    source: output,
+                    computeOutputKind: () => value.type
+                }
+            ]
+        },
+        output
+    ]
+}
 
 const [a, sourceA] = constantNode({
-  type: PrimitiveLabels.number,
-  value: 1
-});
+    type: Label.number,
+    value: 1
+})
 
 const [b, sourceB] = constantNode({
-  type: PrimitiveLabels.number,
-  value: 2
-});
+    type: Label.number,
+    value: 2
+})
 
-const adderSource = stream<any>();
+const adderSource = stream<SNumber>(s =>
+    s.next({
+        type: Label.number,
+        value: 0
+    })
+)
 
 const adder: SNode = {
-  kind: SNodeKinds.general,
-  inputs: [
-    {
-      connection: Some({
-        node: () => a,
-        index: 0
-      }),
-      labelConstraint: isOfType(PrimitiveLabels.number),
-      labelName: "number"
-    },
-    {
-      connection: Some({
-        node: () => b,
-        index: 0
-      }),
-      labelConstraint: isOfType(PrimitiveLabels.number),
-      labelName: "number"
-    }
-  ],
-  outputs: [
-    {
-      source: adderSource,
-      computeOutputKind: () => PrimitiveLabels.number
-    }
-  ],
-  transformation: inputs => [
-    {
-      type: PrimitiveLabels.number,
-      value: inputs.reduce((a, b) => {
-        if (b.type !== PrimitiveLabels.number) {
-          throw new Error("something went wrong");
+    kind: SNodeKinds.general,
+    inputs: [
+        {
+            connection: Some({
+                node: () => a,
+                index: 0
+            }),
+            labelConstraint: isOfLabel(Label.number),
+            labelName: 'number',
+            id: 0
+        },
+        {
+            connection: Some({
+                node: () => adder,
+                index: 0
+            }),
+            labelConstraint: isOfLabel(Label.number),
+            labelName: 'number',
+            id: 1
         }
+    ],
+    outputs: [
+        {
+            source: adderSource,
+            computeOutputKind: ([a, b]) => (a === b ? a : Label.void)
+        }
+    ],
+    transformation: inputs => [
+        {
+            type: Label.number,
+            value: inputs.reduce((a, b) => {
+                if (b.type !== Label.number) {
+                    throw new Error('something went wrong')
+                }
 
-        return a + b.value;
-      }, 0)
-    }
-  ]
-};
+                return a + (b.value ?? 0)
+            }, 0)
+        }
+    ]
+}
 
 const output: SNode = {
-  kind: SNodeKinds.output,
-  inputs: [
-    {
-      connection: Some({
-        node: () => adder,
-        index: 0
-      }),
-      labelConstraint: () => true,
-      labelName: "anything"
+    kind: SNodeKinds.output,
+    inputs: [
+        {
+            connection: Some({
+                node: () => adder,
+                index: 0
+            }),
+            labelConstraint: () => true,
+            labelName: 'anything',
+            id: 1
+        }
+    ],
+    outputs: [],
+    transformation: inputs => {
+        console.log(inputs)
+        return []
     }
-  ],
-  outputs: [],
-  transformation: inputs => {
-    console.log(inputs);
-    return [];
-  }
-};
+}
 
-const graph = [a, b, adder, output];
+const graph = [a, b, adder, output]
 
-initGraph(graph);
-
-sourceB.next({
-  value: 7,
-  type: PrimitiveLabels.number
-});
+initGraph(graph)
 
 sourceA.next({
-  value: 5,
-  type: PrimitiveLabels.number
-});
+    value: 1,
+    type: Label.number
+})

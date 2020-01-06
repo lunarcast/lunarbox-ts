@@ -1,93 +1,111 @@
-import * as Option from "@adrielus/option";
-import {
-  fromIterableSync,
-  metaStream,
-  pubsub,
-  stream,
-  sync
-} from "@thi.ng/rstream";
-import * as tx from "@thi.ng/transducers";
-import { Label, PrimitiveLabels, SVariableInstance } from "../types/Labels";
-import { SConnection, SInputPin, SNode, SOutputPin } from "../types/VGraph";
+import * as Option from '@adrielus/option'
+import { fromIterable, metaStream, pubsub, stream, sync } from '@thi.ng/rstream'
+import * as tx from '@thi.ng/transducers'
+import { Label, SVariableInstance } from '../types/Labels'
+import { SConnection, SInputPin, SNode, SOutputPin } from '../types/VGraph'
+import { isOfLabel } from './labelValidation'
 
 const labelToString = (label: Label) => {
-  if (PrimitiveLabels[label]) {
-    return PrimitiveLabels[label];
-  }
-};
+    if (Label[label]) {
+        return Label[label]
+    }
+}
 
 const getConnectionStart = (connection: SConnection): SOutputPin =>
-  connection.node().outputs[connection.index];
+    connection.node().outputs[connection.index]
 
-const getInputPinLabel = (pin: SInputPin): Label => {
-  const connection = Option.get<SConnection>(pin.connection);
-  const type = getOutputPinLabel(connection);
+const getInputPinLabel = (
+    pin: SInputPin,
+    visitedInputs: Set<number>
+): Label => {
+    if (visitedInputs.has(pin.id)) {
+        return Label.void
+    }
 
-  const validationResult = pin.labelConstraint(type);
+    const connection = Option.get<SConnection>(pin.connection)
+    const type = getOutputPinLabel(connection, visitedInputs.add(pin.id))
 
-  if (!validationResult) {
-    throw new Error(
-      `Hey, it looks like the output pin gave me a "${labelToString(
-        type
-      )}", but the input pin was expecting ${
-        pin.labelName === undefined
-          ? '"something else"'
-          : `a "${pin.labelName}"`
-      }!`
-    );
-  }
+    const validationResult = pin.labelConstraint(type)
 
-  return type;
-};
+    if (!validationResult) {
+        throw new Error(
+            `Hey, it looks like the output pin gave me a "${labelToString(
+                type
+            )}", but the input pin was expecting ${
+                pin.labelName === undefined
+                    ? '"something else"'
+                    : `a "${pin.labelName}"`
+            }!`
+        )
+    }
 
-const getInputPinLabels = (node: SNode): Label[] => {
-  return node.inputs.map(pin => getInputPinLabel(pin));
-};
+    return type
+}
 
-const getOutputPinLabel = (connection: SConnection): Label => {
-  const start = getConnectionStart(connection);
-  const startInputLabels = getInputPinLabels(connection.node());
+const getInputPinLabels = (
+    node: SNode,
+    visitedInputs: Set<number>
+): Label[] => {
+    return node.inputs.map(pin => getInputPinLabel(pin, visitedInputs))
+}
 
-  return start.computeOutputKind(startInputLabels);
-};
+const getOutputPinLabel = (
+    connection: SConnection,
+    visitedInputs: Set<number>
+): Label => {
+    const start = getConnectionStart(connection)
+    const startInputLabels = getInputPinLabels(connection.node(), visitedInputs)
+
+    return start.computeOutputKind(startInputLabels)
+}
+
+const isUnknown = isOfLabel(Label.void)
 
 export const initGraph = (_module: SNode[]) => {
-  for (const node of _module) {
-    const streams = node.inputs.map(input => {
-      const connection = Option.get<SConnection>(input.connection);
+    for (const node of _module) {
+        const streams = node.inputs.map(input => {
+            const connection = Option.get<SConnection>(input.connection)
 
-      // validate input
-      getInputPinLabel(input);
+            // validate input
+            const type = getInputPinLabel(input, new Set())
 
-      return getConnectionStart(connection).source;
-    });
+            if (isUnknown(type)) {
+                // TODO: better error message
+                throw new Error('Cannot resolve label')
+            }
 
-    const merged = sync<SVariableInstance, Record<string, SVariableInstance>>({
-      src: streams,
-      all: true
-    }).transform(tx.map(o => Object.values(o)));
+            return getConnectionStart(connection).source
+        })
 
-    const results = merged.transform(tx.map(node.transformation));
+        const merged = sync<
+            SVariableInstance,
+            Record<string, SVariableInstance>
+        >({
+            src: streams,
+            all: true
+        }).transform(tx.map(o => Object.values(o)))
 
-    const indexedResults = results.subscribe(
-      metaStream((inputs: SVariableInstance[]) =>
-        fromIterableSync(tx.indexed(inputs))
-      )
-    );
+        const results = merged.transform(tx.map(node.transformation))
 
-    const splitter = pubsub({
-      topic: (a: [number, SVariableInstance]) => a[0]
-    });
+        const indexedResults = results.subscribe(
+            metaStream((inputs: SVariableInstance[]) =>
+                fromIterable(tx.indexed(inputs))
+            )
+        )
 
-    indexedResults.subscribe(splitter);
+        const splitter = pubsub({
+            topic: (a: [number, SVariableInstance]) => a[0]
+        })
 
-    for (let index = 0; index < node.outputs.length; index++) {
-      const pipe = stream<[number, SVariableInstance]>().transform(
-        tx.map(v => v[1])
-      );
+        indexedResults.subscribe(splitter)
 
-      splitter.subscribeTopic(index, pipe);
-      pipe.subscribe(node.outputs[index].source);
+        for (let index = 0; index < node.outputs.length; index++) {
+            const pipe = stream<[number, SVariableInstance]>().transform(
+                tx.map(v => v[1])
+            )
+
+            splitter.subscribeTopic(index, pipe)
+            pipe.subscribe(node.outputs[index].source)
+        }
     }
-  }
-};
+}
