@@ -1,0 +1,27 @@
+{
+  "name": "umbrellafp",
+  "scripts": {
+    "dev": "webpack-dev-server",
+    "build": "cross-env NODE_ENV=production webpack"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.4",
+    "cross-env": "^6.0.3",
+    "html-webpack-plugin": "^3.2.0",
+    "source-map-loader": "^0.2.4",
+    "ts-loader": "^6.2.1",
+    "typescript": "^3.7.4",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
+  },
+  "dependencies": {
+    "@adrielus/option": "^3.2.2",
+    "@thi.ng/api": "^6.6.0",
+    "@thi.ng/atom": "^3.1.2",
+    "@thi.ng/hdom": "^8.0.8",
+    "@thi.ng/interceptors": "^2.2.3",
+    "@thi.ng/rstream": "^3.0.0",
+    "@thi.ng/transducers": "^6.1.0"
+  }
+}
