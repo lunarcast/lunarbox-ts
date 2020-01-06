@@ -1,65 +1,10 @@
 import * as Option from '@adrielus/option'
 import { fromIterable, metaStream, pubsub, stream, sync } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
-import { Label, SVariableInstance } from '../types/Labels'
-import { SConnection, SInputPin, SNode, SOutputPin } from '../types/VGraph'
-import { isOfLabel } from './labelValidation'
-
-const labelToString = (label: Label) => {
-    if (Label[label]) {
-        return Label[label]
-    }
-}
-
-const getConnectionStart = (connection: SConnection): SOutputPin =>
-    connection.node().outputs[connection.index]
-
-const getInputPinLabel = (
-    pin: SInputPin,
-    visitedInputs: Set<number>
-): Label => {
-    if (visitedInputs.has(pin.id)) {
-        return Label.void
-    }
-
-    const connection = Option.get<SConnection>(pin.connection)
-    const type = getOutputPinLabel(connection, visitedInputs.add(pin.id))
-
-    const validationResult = pin.labelConstraint(type)
-
-    if (!validationResult) {
-        throw new Error(
-            `Hey, it looks like the output pin gave me a "${labelToString(
-                type
-            )}", but the input pin was expecting ${
-                pin.labelName === undefined
-                    ? '"something else"'
-                    : `a "${pin.labelName}"`
-            }!`
-        )
-    }
-
-    return type
-}
-
-const getInputPinLabels = (
-    node: SNode,
-    visitedInputs: Set<number>
-): Label[] => {
-    return node.inputs.map(pin => getInputPinLabel(pin, visitedInputs))
-}
-
-const getOutputPinLabel = (
-    connection: SConnection,
-    visitedInputs: Set<number>
-): Label => {
-    const start = getConnectionStart(connection)
-    const startInputLabels = getInputPinLabels(connection.node(), visitedInputs)
-
-    return start.computeOutputKind(startInputLabels)
-}
-
-const isUnknown = isOfLabel(Label.void)
+import { SVariableInstance } from '../types/Labels'
+import { SConnection, SNode } from '../types/VGraph'
+import { isUnknown } from './labelValidation'
+import { getConnectionStart, getInputPinLabel } from './staticTyping'
 
 export const initGraph = (_module: SNode[]) => {
     for (const node of _module) {
@@ -70,9 +15,15 @@ export const initGraph = (_module: SNode[]) => {
             const type = getInputPinLabel(input, new Set())
 
             if (isUnknown(type)) {
-                // TODO: better error message
-                throw new Error('Cannot resolve label')
+                throw new Error(
+                    'Hey, you are probably missing a connection or something because I cannot figure out the type of this input pin :3'
+                )
             }
+
+            // This comment was from a random joke you most probably can't understand
+            // So just skip over it please:
+
+            // I din't to it, it wasn't me!!! See? I am coding!!!
 
             return getConnectionStart(connection).source
         })
