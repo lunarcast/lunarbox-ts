@@ -1,4 +1,13 @@
 import { start } from '@thi.ng/hdom'
-import './test'
+import { app } from './modules/core/components/app'
 
-start(['div', 'hello world'])
+start(app, {
+    // data passed to all components
+    ctx: {},
+
+    // element to render to
+    root: document.body,
+
+    // prevent creation of unnecessary spans
+    span: false
+})
