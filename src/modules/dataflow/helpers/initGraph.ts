@@ -2,17 +2,13 @@ import { fromIterable, metaStream, pubsub, stream, sync } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
 import * as Either from 'fp-ts/es6/Either'
 import { pipe } from 'fp-ts/es6/pipeable'
-import { SVariableInstance } from '../../typeChecking/types/Labels'
-import { SNode } from './types/SGraph'
-import {
-    isUnknown,
-    unkownTypeError
-} from '../../typeChecking/helpers/labelValidation'
-import {
-    getConnectionStart,
-    getInputPinLabel
-} from '../../typeChecking/helpers/staticTyping'
+import { unkownTypeError } from '../../typeChecking/constants'
+import { getConnectionStart } from '../../typeChecking/helpers/getConnectionStart'
+import { getInputPinLabel } from '../../typeChecking/helpers/getInputPinLabels'
+import { isUnknown } from '../../typeChecking/helpers/isUnknown'
 import { LabelValidationError } from '../../typeChecking/types/Errors'
+import { SVariableInstance } from '../../typeChecking/types/Labels'
+import { SNode } from '../types/SGraph'
 
 export const initGraph = (_module: SNode[]) => {
     for (const node of _module) {

@@ -1,28 +1,20 @@
-import * as Array from 'fp-ts/es6/Array'
 import * as Either from 'fp-ts/es6/Either'
 import { pipe } from 'fp-ts/es6/pipeable'
+import { SInputPin, SNode } from '../../dataflow/types/SGraph'
 import {
     LabelValidationFailureReasons,
     LabelValidationResult
 } from '../types/Errors'
 import { Label } from '../types/Labels'
-import {
-    SConnection,
-    SInputPin,
-    SNode,
-    SOutputPin
-} from '../../dataflow/helpers/types/SGraph'
-import { createLabelValidationError } from './labelValidation'
+import { createLabelValidationError } from './createLabelValidationError'
+import { getOutputPinLabel } from './getOutputPinLabel'
 
-export const labelToString = (label: Label) => {
-    if (Label[label]) {
-        return Label[label]
-    }
-}
-
-export const getConnectionStart = (connection: SConnection): SOutputPin =>
-    connection.node().outputs[connection.index]
-
+/**
+ * Infers the label of any input pin.
+ *
+ * @param pin The pin to get the label for.
+ * @param visitedInputs Optional set of inputs already visited. Used to prevent infinite recursion.
+ */
 export const getInputPinLabel = (
     pin: SInputPin,
     visitedInputs: Set<number>
@@ -58,23 +50,15 @@ export const getInputPinLabel = (
     )
 }
 
-const getInputPinLabels = (
+/**
+ * Infers the labels for all the input pins of any node.
+ *
+ * @param node The node to infer the input pins for.
+ * @param visitedInputs Optional set of inputs already visited. Used to prevent infinite recursion.
+ */
+export const getInputPinLabels = (
     node: SNode,
     visitedInputs: Set<number>
 ): LabelValidationResult[] => {
     return node.inputs.map(pin => getInputPinLabel(pin, visitedInputs))
-}
-
-const getOutputPinLabel = (
-    connection: SConnection,
-    visitedInputs: Set<number>
-): LabelValidationResult => {
-    const start = getConnectionStart(connection)
-    const startInputLabels = getInputPinLabels(connection.node(), visitedInputs)
-
-    return pipe(
-        startInputLabels,
-        Array.array.sequence(Either.either),
-        Either.map(start.computeOutputKind)
-    )
 }

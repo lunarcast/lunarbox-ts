@@ -1,5 +1,5 @@
 import { Stream } from '@thi.ng/rstream'
-import { Label, SVariableInstance } from '../../../typeChecking/types/Labels'
+import { Label, SVariableInstance } from '../../typeChecking/types/Labels'
 
 /**
  * Currently supported node kinds.
@@ -75,10 +75,32 @@ export type SOutputPin = {
     source: Stream<SVariableInstance>
 }
 
+/**
+ * Node of the any Simulation graphs.
+ */
 export interface SNode {
+    /**
+     * Function which takes the resolved inputs
+     * and returns the values for the outputs.
+     *
+     * @param inputs The inputs to process
+     * @returns The outputs of the node.
+     */
     transformation: (inputs: SVariableInstance[]) => SVariableInstance[]
+
+    /**
+     * Array of input pins.
+     */
     inputs: SInputPin[]
+
+    /**
+     * Array of output pins.
+     */
     outputs: SOutputPin[]
+
+    /**
+     * Specifies what type of node this is.
+     */
     kind: SNodeKinds
 }
 
