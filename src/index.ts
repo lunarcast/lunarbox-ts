@@ -1,3 +1,4 @@
-import { start } from "@thi.ng/hdom";
+import { start } from '@thi.ng/hdom'
+import './graph/test'
 
-start(["div", "hello world"]);
+start(['div', 'hello world'])

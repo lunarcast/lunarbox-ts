@@ -1,8 +1,15 @@
-import * as Option from '@adrielus/option'
+import * as Array from 'fp-ts/es6/Array'
+import * as Either from 'fp-ts/es6/Either'
+import { pipe } from 'fp-ts/es6/pipeable'
+import {
+    LabelValidationFailureReasons,
+    LabelValidationResult
+} from '../types/Errors'
 import { Label } from '../types/Labels'
 import { SConnection, SInputPin, SNode, SOutputPin } from '../types/VGraph'
+import { createLabelValidationError } from './labelValidation'
 
-const labelToString = (label: Label) => {
+export const labelToString = (label: Label) => {
     if (Label[label]) {
         return Label[label]
     }
@@ -14,44 +21,55 @@ export const getConnectionStart = (connection: SConnection): SOutputPin =>
 export const getInputPinLabel = (
     pin: SInputPin,
     visitedInputs: Set<number>
-): Label => {
+): LabelValidationResult => {
     if (visitedInputs.has(pin.id)) {
-        return Label.void
+        return Either.right(Label.void)
     }
 
-    const connection = Option.get<SConnection>(pin.connection)
-    const type = getOutputPinLabel(connection, visitedInputs.add(pin.id))
+    const type = getOutputPinLabel(pin.connection, visitedInputs.add(pin.id))
 
-    const validationResult = pin.labelConstraint(type)
+    return pipe(
+        type,
+        Either.chain(found => {
+            const succes = pin.labelConstraint(found)
 
-    if (!validationResult) {
-        throw new Error(
-            `Hey, it looks like the output pin gave me a "${labelToString(
-                type
-            )}", but the input pin was expecting ${
-                pin.labelName === undefined
-                    ? '"something else"'
-                    : `a "${pin.labelName}"`
-            }!`
-        )
-    }
+            if (succes) {
+                return Either.right(found)
+            }
 
-    return type
+            const errorDetails = {
+                found,
+                expected: pin.labelName
+            }
+
+            return pipe(
+                errorDetails,
+                createLabelValidationError(
+                    LabelValidationFailureReasons.typeMismatch
+                ),
+                Either.left
+            )
+        })
+    )
 }
 
 const getInputPinLabels = (
     node: SNode,
     visitedInputs: Set<number>
-): Label[] => {
+): LabelValidationResult[] => {
     return node.inputs.map(pin => getInputPinLabel(pin, visitedInputs))
 }
 
 const getOutputPinLabel = (
     connection: SConnection,
     visitedInputs: Set<number>
-): Label => {
+): LabelValidationResult => {
     const start = getConnectionStart(connection)
     const startInputLabels = getInputPinLabels(connection.node(), visitedInputs)
 
-    return start.computeOutputKind(startInputLabels)
+    return pipe(
+        startInputLabels,
+        Array.array.sequence(Either.either),
+        Either.map(start.computeOutputKind)
+    )
 }

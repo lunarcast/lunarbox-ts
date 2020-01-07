@@ -1,4 +1,3 @@
-import { Option } from '@adrielus/option'
 import { Stream } from '@thi.ng/rstream'
 import { Label, SVariableInstance } from './Labels'
 
@@ -43,7 +42,7 @@ export type SInputPin = {
     /**
      * Possible connection to another pin.
      */
-    connection: Option<SConnection>
+    connection: SConnection
 
     /**
      * Predicate to validate incoming types.
@@ -53,7 +52,7 @@ export type SInputPin = {
     /**
      * For friendlier errors.
      */
-    labelName?: string
+    labelName: string
 
     /**
      * Id for the pin

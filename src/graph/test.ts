@@ -1,8 +1,7 @@
-import { Some } from '@adrielus/option'
 import { stream, Stream } from '@thi.ng/rstream'
 import { initGraph } from './helpers/initGraph'
 import { isOfLabel } from './helpers/labelValidation'
-import { Label, SVariableInstance, SNumber } from './types/Labels'
+import { Label, SNumber, SVariableInstance } from './types/Labels'
 import { SNode, SNodeKinds } from './types/VGraph'
 
 const constantNode = <T extends SVariableInstance>(
@@ -49,19 +48,19 @@ const adder: SNode = {
     kind: SNodeKinds.general,
     inputs: [
         {
-            connection: Some({
+            connection: {
                 node: () => a,
                 index: 0
-            }),
-            labelConstraint: isOfLabel(Label.number),
+            },
+            labelConstraint: isOfLabel(Label.boolean),
             labelName: 'number',
             id: 0
         },
         {
-            connection: Some({
+            connection: {
                 node: () => adder,
                 index: 0
-            }),
+            },
             labelConstraint: isOfLabel(Label.number),
             labelName: 'number',
             id: 1
@@ -91,10 +90,10 @@ const output: SNode = {
     kind: SNodeKinds.output,
     inputs: [
         {
-            connection: Some({
+            connection: {
                 node: () => adder,
                 index: 0
-            }),
+            },
             labelConstraint: () => true,
             labelName: 'anything',
             id: 1

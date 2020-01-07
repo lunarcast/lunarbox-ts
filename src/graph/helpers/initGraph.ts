@@ -1,23 +1,33 @@
-import * as Option from '@adrielus/option'
 import { fromIterable, metaStream, pubsub, stream, sync } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
+import * as Either from 'fp-ts/es6/Either'
+import { pipe } from 'fp-ts/es6/pipeable'
 import { SVariableInstance } from '../types/Labels'
-import { SConnection, SNode } from '../types/VGraph'
-import { isUnknown } from './labelValidation'
+import { SNode } from '../types/VGraph'
+import { isUnknown, unkownTypeError } from './labelValidation'
 import { getConnectionStart, getInputPinLabel } from './staticTyping'
+import { LabelValidationError } from '../types/Errors'
 
 export const initGraph = (_module: SNode[]) => {
     for (const node of _module) {
         const streams = node.inputs.map(input => {
-            const connection = Option.get<SConnection>(input.connection)
+            const connection = input.connection
 
             // validate input
             const type = getInputPinLabel(input, new Set())
 
-            if (isUnknown(type)) {
-                throw new Error(
-                    'Hey, you are probably missing a connection or something because I cannot figure out the type of this input pin :3'
+            if (
+                pipe(
+                    type,
+                    Either.filterOrElse(isUnknown, () => unkownTypeError),
+                    Either.isLeft
                 )
+            ) {
+                const { left: error } = type as Either.Left<
+                    LabelValidationError
+                >
+
+                throw error
             }
 
             // This comment was from a random joke you most probably can't understand

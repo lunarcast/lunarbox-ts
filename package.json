@@ -16,12 +16,9 @@
     "webpack-dev-server": "^3.10.1"
   },
   "dependencies": {
-    "@adrielus/option": "^3.2.2",
-    "@thi.ng/api": "^6.6.0",
-    "@thi.ng/atom": "^3.1.2",
     "@thi.ng/hdom": "^8.0.8",
-    "@thi.ng/interceptors": "^2.2.3",
     "@thi.ng/rstream": "^3.0.0",
-    "@thi.ng/transducers": "^6.1.0"
+    "@thi.ng/transducers": "^6.1.0",
+    "fp-ts": "^2.3.1"
   }
 }
