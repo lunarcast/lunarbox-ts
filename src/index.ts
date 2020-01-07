@@ -1,13 +1,32 @@
-import { start } from '@thi.ng/hdom'
+import { merge, stream, trigger } from '@thi.ng/rstream'
+import * as tx from '@thi.ng/transducers'
+import { updateDOM } from '@thi.ng/transducers-hdom'
 import { app } from './modules/core/components/app'
+import { AppConext } from './modules/core/types/AppContext'
 
-start(app, {
-    // data passed to all components
-    ctx: {},
+const globalStreams: AppConext['globalStreams'] = stream()
 
-    // element to render to
-    root: document.body,
+const initialContext: AppConext = {
+    globalStreams
+}
 
-    // prevent creation of unnecessary spans
-    span: false
-})
+merge({
+    src: [globalStreams]
+}).transform(
+    tx.comp(
+        tx.map(() => app),
+        updateDOM({
+            // data passed to all components
+            ctx: initialContext,
+
+            // element to render to
+            root: document.body,
+
+            // prevent creation of unnecessary spans
+            span: false
+        })
+    )
+)
+
+// initial render
+globalStreams.next(trigger(null))
