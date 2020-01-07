@@ -6,7 +6,12 @@ import {
     LabelValidationResult
 } from '../types/Errors'
 import { Label } from '../types/Labels'
-import { SConnection, SInputPin, SNode, SOutputPin } from '../types/VGraph'
+import {
+    SConnection,
+    SInputPin,
+    SNode,
+    SOutputPin
+} from '../../dataflow/helpers/types/SGraph'
 import { createLabelValidationError } from './labelValidation'
 
 export const labelToString = (label: Label) => {

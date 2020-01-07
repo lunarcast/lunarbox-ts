@@ -1,8 +1,12 @@
 import { stream, Stream } from '@thi.ng/rstream'
-import { initGraph } from './helpers/initGraph'
-import { isOfLabel } from './helpers/labelValidation'
-import { Label, SNumber, SVariableInstance } from './types/Labels'
-import { SNode, SNodeKinds } from './types/VGraph'
+import { initGraph } from '../modules/dataflow/helpers/initGraph'
+import { isOfLabel } from '../modules/typeChecking/helpers/labelValidation'
+import {
+    Label,
+    SNumber,
+    SVariableInstance
+} from '../modules/typeChecking/types/Labels'
+import { SNode, SNodeKinds } from '../modules/dataflow/helpers/types/SGraph'
 
 const constantNode = <T extends SVariableInstance>(
     value: T

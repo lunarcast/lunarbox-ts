@@ -1,5 +1,5 @@
 import { Stream } from '@thi.ng/rstream'
-import { Label, SVariableInstance } from './Labels'
+import { Label, SVariableInstance } from '../../../typeChecking/types/Labels'
 
 /**
  * Currently supported node kinds.
