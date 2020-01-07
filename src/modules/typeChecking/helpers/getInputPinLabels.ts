@@ -19,33 +19,44 @@ export const getInputPinLabel = (
     pin: SInputPin,
     visitedInputs: Set<number>
 ): LabelValidationResult => {
+    // input pins get their labels by passing the label
+    // of the connected output trough a special constraint predicate
+    // given for each pin
+
     if (visitedInputs.has(pin.id)) {
+        // if we already visited the pin we return void
+        // I do this to prevent infinite recursion
         return Either.right(Label.void)
     }
 
+    // infer the type of the connected pin
     const type = getOutputPinLabel(pin.connection, visitedInputs.add(pin.id))
 
+    // this pipe is here to let typescript guess the type
+    // for the callback given to Either.chain
     return pipe(
         type,
         Either.chain(found => {
             const succes = pin.labelConstraint(found)
 
+            // in case of no errors we just return the type we found
             if (succes) {
                 return Either.right(found)
             }
 
+            // details used to generate friendly error messages
             const errorDetails = {
                 found,
                 expected: pin.labelName
             }
 
-            return pipe(
-                errorDetails,
-                createLabelValidationError(
-                    LabelValidationFailureReasons.typeMismatch
-                ),
-                Either.left
+            // create an error builder for the type missmatch
+            const buildError = createLabelValidationError(
+                LabelValidationFailureReasons.typeMismatch
             )
+
+            // first we build the error and than we mark it as an error
+            return pipe(errorDetails, buildError, Either.left)
         })
     )
 }

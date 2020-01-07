@@ -6,7 +6,8 @@ import { Label } from '../types/Labels'
  * @param label The label to stringify.
  */
 export const labelToString = (label: Label) => {
-    if (Label[label]) {
-        return Label[label]
-    }
+    // typescript enums are double maps
+    // that means enum[a] = b <=> enum[b] = a
+    // We can use this to extract the name of the label code
+    return Label[label]
 }
