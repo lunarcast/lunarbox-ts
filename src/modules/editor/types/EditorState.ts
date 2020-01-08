@@ -3,6 +3,7 @@ export interface VNodeState {
         position: number[]
         scale: number[]
     }
+    selected: boolean
 }
 
 /**

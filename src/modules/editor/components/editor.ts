@@ -10,18 +10,13 @@ import { full } from '../../core/styles/full'
 import { AppConext } from '../../core/types/AppContext'
 import { EditorState } from '../types/EditorState'
 import { VNode } from './node'
+import { pipe } from 'fp-ts/es6/pipeable'
+import * as Option from 'fp-ts/es6/Option'
 
 export class Editor implements ILifecycle {
     private state = new Atom<EditorState>({
         lastId: 0,
-        nodes: {
-            [0]: {
-                transform: {
-                    position: [100, 200],
-                    scale: [200, 300]
-                }
-            }
-        },
+        nodes: {},
         selectedNodes: new Set()
     })
 
@@ -30,41 +25,89 @@ export class Editor implements ILifecycle {
      */
     private nodes: VNode[] = [new VNode(this.state)]
 
+    private get selectedNodes() {
+        return this.nodes.filter(node => node.state.deref().selected)
+    }
+
     /**
      * Called by hdom when the element is added to the dom.
      */
     public init(element: HTMLElement, ctx: AppConext) {
-        const mousemoves = fromEvent(element, 'mousemove')
+        const mouseMoves = fromEvent(element, 'mousemove')
+        const dragStarts = fromEvent(element, 'mousedown')
+        const mouseUps = fromEvent(element, 'mouseup')
 
-        const drags = mousemoves.transform(
+        const drags = mouseMoves.transform(
             tx.filter<MouseEvent>(e => e.buttons !== 0)
         )
 
-        drags
+        const delta = new Atom<Option.Option<readonly [number, number]>>(
+            Option.none
+        )
+
+        mouseUps.subscribe({
+            next: () => {
+                delta.reset(Option.none)
+            }
+        })
+
+        dragStarts
             .transform(
-                // only keep the data we need
-                tx.map(e => [e.clientX, e.clientY]),
-                // combine the data with it's previous value
-                tx.partition(2, 1),
-                // calculate the difference between the latest and current value
-                tx.map(([old, current]) => sub2([], current, old)),
-                // typescript cannot guess the type of dedupe
-                tx.dedupe<Vec2>()
+                tx.comp(
+                    tx.map(e => e.target),
+                    tx.filter(e => e !== null),
+                    tx.map((target: HTMLElement) => target.id),
+                    tx.dedupe()
+                )
             )
             .subscribe({
-                next: diff => {
+                next: id => {
                     for (const node of this.nodes) {
-                        node.state.swapIn(
-                            ['transform', 'position'],
-                            (input: number[]) => {
-                                return add2([], diff, input)
-                            }
-                        )
+                        if (node.state.deref().selected) {
+                            node.state.resetIn('selected', false)
+                        }
+
+                        if (node.id === Number(id)) {
+                            node.state.resetIn('selected', true)
+                        }
                     }
                 }
             })
 
-        ctx.reactingTo.next(drags)
+        drags
+            .transform(
+                tx.comp(
+                    tx.map(e => [e.clientX, e.clientY] as const),
+                    tx.dedupe()
+                )
+            )
+            .subscribe({
+                next: position => {
+                    pipe(
+                        delta.deref(),
+                        Option.map(oldDelta => {
+                            const diff = sub2([], position, oldDelta)
+
+                            for (const node of this.selectedNodes) {
+                                node.state.swapIn(
+                                    ['transform', 'position'],
+                                    (input: number[]) => {
+                                        return add2([], diff, input)
+                                    }
+                                )
+                            }
+                        })
+                    )
+
+                    delta.reset(Option.some(position))
+                }
+            })
+
+        const streams = [drags, mouseUps, mouseMoves]
+
+        for (const stream of streams) {
+            ctx.reactingTo.next(stream)
+        }
     }
 
     /**

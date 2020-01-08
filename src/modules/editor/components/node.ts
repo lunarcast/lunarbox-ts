@@ -23,7 +23,8 @@ export class VNode implements ILifecycle {
             transform: {
                 position: [100, 200],
                 scale: [200, 300]
-            }
+            },
+            selected: false
         })
 
         this.state = new Cursor(this.editorState, ['nodes', this.id])
@@ -38,11 +39,12 @@ export class VNode implements ILifecycle {
         return [
             'rect',
             {
+                id: this.id,
                 x: current.transform.position[0],
                 y: current.transform.position[1],
                 width: current.transform.scale[0],
                 height: current.transform.scale[1],
-                fill: 'white'
+                fill: current.selected ? 'yellow' : 'whtie'
             }
         ]
     }
