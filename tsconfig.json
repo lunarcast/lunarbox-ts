@@ -2,11 +2,13 @@
     "compilerOptions": {
         "sourceMap": true,
         "target": "es6",
+        "baseUrl": ".",
         "module": "ESNext",
         "esModuleInterop": true,
         "moduleResolution": "node",
         "strictNullChecks": true,
-        "outDir": "dist"
+        "outDir": "dist",
+        "allowSyntheticDefaultImports": true
     },
     "include": ["src"]
 }

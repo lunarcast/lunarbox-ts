@@ -4,10 +4,10 @@ import { updateDOM } from '@thi.ng/transducers-hdom'
 import { app } from './modules/core/components/app'
 import { AppConext } from './modules/core/types/AppContext'
 
-const globalStreams: AppConext['globalStreams'] = stream()
+const globalStreams: AppConext['reactingTo'] = stream()
 
 const initialContext: AppConext = {
-    globalStreams
+    reactingTo: globalStreams
 }
 
 merge({

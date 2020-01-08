@@ -1,5 +1,7 @@
 import { AppConext } from '../types/AppContext'
-import { editor } from '../../editor/components/editor'
+import { Editor } from '../../editor/components/editor'
+
+const editor = new Editor()
 
 export const app = (ctx: AppConext) => {
     return [editor]
