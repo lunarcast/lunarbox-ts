@@ -4,12 +4,12 @@ import { ILifecycle } from '@thi.ng/hdom'
 import { svg } from '@thi.ng/hiccup-svg'
 import { fromEvent } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
-import { add2, sub2 } from '@thi.ng/vectors'
+import { add2, sub2, Vec2 } from '@thi.ng/vectors'
 import { background } from '../../core/styles/background'
 import { full } from '../../core/styles/full'
 import { AppConext } from '../../core/types/AppContext'
 import { EditorState } from '../types/EditorState'
-import { node } from './node'
+import { VNode } from './node'
 
 export class Editor implements ILifecycle {
     private state = new Atom<EditorState>({
@@ -25,9 +25,10 @@ export class Editor implements ILifecycle {
         selectedNodes: new Set()
     })
 
-    private get nodes() {
-        return Object.values(this.state.deref().nodes)
-    }
+    /**
+     * Array with all nodes in the editor.
+     */
+    private nodes: VNode[] = [new VNode(this.state)]
 
     /**
      * Called by hdom when the element is added to the dom.
@@ -41,19 +42,20 @@ export class Editor implements ILifecycle {
 
         drags
             .transform(
-                tx.comp(
-                    tx.map(e => [e.clientX, e.clientY] as const),
-                    tx.partition(2, 1),
-                    tx.dedupe()
-                )
+                // only keep the data we need
+                tx.map(e => [e.clientX, e.clientY]),
+                // combine the data with it's previous value
+                tx.partition(2, 1),
+                // calculate the difference between the latest and current value
+                tx.map(([old, current]) => sub2([], current, old)),
+                // typescript cannot guess the type of dedupe
+                tx.dedupe<Vec2>()
             )
             .subscribe({
-                next: ([old, current]) => {
-                    const diff = sub2([], current, old)
-
-                    for (const id in this.state.deref().nodes) {
-                        this.state.swapIn(
-                            ['nodes', id, 'transform', 'position'],
+                next: diff => {
+                    for (const node of this.nodes) {
+                        node.state.swapIn(
+                            ['transform', 'position'],
                             (input: number[]) => {
                                 return add2([], diff, input)
                             }
@@ -76,7 +78,7 @@ export class Editor implements ILifecycle {
                     ...background('#333333', ColorMode.CSS)
                 }
             },
-            ...this.nodes.map(node)
+            ...this.nodes.map(node => [node])
         )
     }
 }
