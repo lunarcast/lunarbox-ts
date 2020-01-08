@@ -48,6 +48,10 @@ export class Editor implements ILifecycle {
         mouseUps.subscribe({
             next: () => {
                 delta.reset(Option.none)
+
+                for (const node of this.nodes) {
+                    node.state.resetIn('selected', false)
+                }
             }
         })
 
@@ -56,8 +60,7 @@ export class Editor implements ILifecycle {
                 tx.comp(
                     tx.map(e => e.target),
                     tx.filter(e => e !== null),
-                    tx.map((target: HTMLElement) => target.id),
-                    tx.dedupe()
+                    tx.map((target: HTMLElement) => target.id)
                 )
             )
             .subscribe({
