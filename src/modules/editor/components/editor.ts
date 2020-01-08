@@ -33,18 +33,22 @@ export class Editor implements ILifecycle {
      * Called by hdom when the element is added to the dom.
      */
     public init(element: HTMLElement, ctx: AppConext) {
+        // mount event listeners
         const mouseMoves = fromEvent(element, 'mousemove')
         const dragStarts = fromEvent(element, 'mousedown')
         const mouseUps = fromEvent(element, 'mouseup')
 
+        // only allow drag
         const drags = mouseMoves.transform(
             tx.filter<MouseEvent>(e => e.buttons !== 0)
         )
 
+        // store the mouse delta
         const delta = new Atom<Option.Option<readonly [number, number]>>(
             Option.none
         )
 
+        //
         mouseUps.subscribe({
             next: () => {
                 delta.reset(Option.none)
@@ -80,17 +84,21 @@ export class Editor implements ILifecycle {
         drags
             .transform(
                 tx.comp(
-                    tx.map(e => [e.clientX, e.clientY] as const),
-                    tx.dedupe()
+                    tx.map(e => [e.clientX, e.clientY] as const), // only keep what we need
+                    tx.dedupe() // remove duplicates
                 )
             )
             .subscribe({
                 next: position => {
                     pipe(
                         delta.deref(),
+                        // We need this because we are not sure
+                        // we have a previous delta to go of
                         Option.map(oldDelta => {
+                            // The amount the mouse moved since the last update
                             const diff = sub2([], position, oldDelta)
 
+                            // move the nodes which are selected
                             for (const node of this.selectedNodes) {
                                 node.state.swapIn(
                                     ['transform', 'position'],
@@ -109,8 +117,13 @@ export class Editor implements ILifecycle {
         // We aren't allowed to start reacting to changes in init
         // so we start on the next tick
         Promise.resolve().then(() => {
+            // changes on this editor
             const stateChanges = fromAtom(this.state)
+
+            // streams to make the app react from
             const streams = [drags, mouseUps, mouseMoves, stateChanges]
+
+            // start reacting to streams
             for (const stream of streams) {
                 ctx.reactingTo.next(stream)
             }
