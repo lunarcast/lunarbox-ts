@@ -1,8 +1,8 @@
-import { Atom } from '@thi.ng/atom'
+import { Atom, Cursor } from '@thi.ng/atom'
 import { ColorMode } from '@thi.ng/color'
 import { ILifecycle } from '@thi.ng/hdom'
 import { svg } from '@thi.ng/hiccup-svg'
-import { fromEvent } from '@thi.ng/rstream'
+import { fromEvent, trace, fromAtom } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
 import { add2, sub2, Vec2 } from '@thi.ng/vectors'
 import { background } from '../../core/styles/background'
@@ -106,11 +106,15 @@ export class Editor implements ILifecycle {
                 }
             })
 
-        const streams = [drags, mouseUps, mouseMoves]
-
-        for (const stream of streams) {
-            ctx.reactingTo.next(stream)
-        }
+        // We aren't allowed to start reacting to changes in init
+        // so we start on the next tick
+        Promise.resolve().then(() => {
+            const stateChanges = fromAtom(this.state)
+            const streams = [drags, mouseUps, mouseMoves, stateChanges]
+            for (const stream of streams) {
+                ctx.reactingTo.next(stream)
+            }
+        })
     }
 
     /**

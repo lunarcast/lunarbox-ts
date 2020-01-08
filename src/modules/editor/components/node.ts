@@ -1,6 +1,5 @@
 import { Atom, Cursor } from '@thi.ng/atom'
 import { ILifecycle } from '@thi.ng/hdom'
-import { vec2 } from '@thi.ng/vectors'
 import { AppConext } from '../../core/types/AppContext'
 import { EditorState, VNodeState } from '../types/EditorState'
 
