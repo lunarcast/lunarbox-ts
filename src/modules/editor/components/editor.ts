@@ -1,17 +1,17 @@
-import { Atom, Cursor } from '@thi.ng/atom'
+import { Atom } from '@thi.ng/atom'
 import { ColorMode } from '@thi.ng/color'
 import { ILifecycle } from '@thi.ng/hdom'
 import { svg } from '@thi.ng/hiccup-svg'
-import { fromEvent, trace, fromAtom } from '@thi.ng/rstream'
+import { fromAtom, fromEvent } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
-import { add2, sub2, Vec2 } from '@thi.ng/vectors'
+import { add2, sub2 } from '@thi.ng/vectors'
+import * as Option from 'fp-ts/es6/Option'
+import { MouseButtons } from '../../core/constants'
 import { background } from '../../core/styles/background'
 import { full } from '../../core/styles/full'
 import { AppConext } from '../../core/types/AppContext'
 import { EditorState } from '../types/EditorState'
 import { VNode } from './node'
-import { pipe } from 'fp-ts/es6/pipeable'
-import * as Option from 'fp-ts/es6/Option'
 
 export class Editor implements ILifecycle {
     private state = new Atom<EditorState>({
@@ -23,8 +23,11 @@ export class Editor implements ILifecycle {
     /**
      * Array with all nodes in the editor.
      */
-    private nodes: VNode[] = [new VNode(this.state)]
+    private nodes: VNode[] = [new VNode(this.state), new VNode(this.state)]
 
+    /**
+     * Getter for an arry with all the nodes which are curently selected.
+     */
     private get selectedNodes() {
         return this.nodes.filter(node => node.state.deref().selected)
     }
@@ -35,12 +38,12 @@ export class Editor implements ILifecycle {
     public init(element: HTMLElement, ctx: AppConext) {
         // mount event listeners
         const mouseMoves = fromEvent(element, 'mousemove')
-        const dragStarts = fromEvent(element, 'mousedown')
+        const mouseDowns = fromEvent(element, 'mousedown')
         const mouseUps = fromEvent(element, 'mouseup')
 
         // only allow drag
         const drags = mouseMoves.transform(
-            tx.filter<MouseEvent>(e => e.buttons !== 0)
+            tx.filter<MouseEvent>(e => Boolean(e.buttons & MouseButtons.left))
         )
 
         // store the mouse delta
@@ -48,32 +51,37 @@ export class Editor implements ILifecycle {
             Option.none
         )
 
-        //
+        // runs when the user stops holding the mosue
         mouseUps.subscribe({
             next: () => {
+                // no more delta values
                 delta.reset(Option.none)
 
+                // unselect everything
                 for (const node of this.nodes) {
                     node.state.resetIn('selected', false)
                 }
             }
         })
 
-        dragStarts
+        mouseDowns
             .transform(
                 tx.comp(
-                    tx.map(e => e.target),
-                    tx.filter(e => e !== null),
-                    tx.map((target: HTMLElement) => target.id)
+                    tx.filter<MouseEvent>(e =>
+                        Boolean(e.buttons & MouseButtons.left)
+                    ), // only allow left clicks
+                    tx.map(e => (e.target as HTMLElement).id) // only select the data we need
                 )
             )
             .subscribe({
                 next: id => {
                     for (const node of this.nodes) {
+                        // unselect everything that was selected
                         if (node.state.deref().selected) {
                             node.state.resetIn('selected', false)
                         }
 
+                        // select the thing the user clicked on
                         if (node.id === Number(id)) {
                             node.state.resetIn('selected', true)
                         }
@@ -90,26 +98,25 @@ export class Editor implements ILifecycle {
             )
             .subscribe({
                 next: position => {
-                    pipe(
-                        delta.deref(),
-                        // We need this because we are not sure
-                        // we have a previous delta to go of
-                        Option.map(oldDelta => {
-                            // The amount the mouse moved since the last update
-                            const diff = sub2([], position, oldDelta)
+                    // We need this because we are not sure
+                    // we have a previous delta to go of
+                    Option.map((oldDelta: ReadonlyArray<number>) => {
+                        // The amount the mouse moved since the last update
+                        const diff = sub2([], position, oldDelta)
 
-                            // move the nodes which are selected
-                            for (const node of this.selectedNodes) {
-                                node.state.swapIn(
-                                    ['transform', 'position'],
-                                    (input: number[]) => {
-                                        return add2([], diff, input)
-                                    }
-                                )
-                            }
-                        })
-                    )
+                        // move the nodes which are selected
+                        for (const node of this.selectedNodes) {
+                            node.state.swapIn(
+                                'transform.position',
+                                (input: number[]) => {
+                                    // move the input by the mouse difference
+                                    return add2([], diff, input)
+                                }
+                            )
+                        }
+                    })(delta.deref())
 
+                    // save current delta
                     delta.reset(Option.some(position))
                 }
             })
@@ -121,7 +128,13 @@ export class Editor implements ILifecycle {
             const stateChanges = fromAtom(this.state)
 
             // streams to make the app react from
-            const streams = [drags, mouseUps, mouseMoves, stateChanges]
+            const streams = [
+                drags,
+                mouseUps,
+                mouseMoves,
+                mouseDowns,
+                stateChanges
+            ]
 
             // start reacting to streams
             for (const stream of streams) {
