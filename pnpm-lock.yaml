@@ -10,6 +10,7 @@ dependencies:
   '@thi.ng/transducers': 6.1.0
   '@thi.ng/transducers-hdom': 2.0.32
   '@thi.ng/vectors': 4.0.1
+  deepmerge: 4.2.2
   fp-ts: 2.3.1
 devDependencies:
   '@types/node': 13.1.4
@@ -19,6 +20,7 @@ devDependencies:
   source-map-loader: 0.2.4
   ts-loader: 6.2.1_typescript@3.7.4
   typescript: 3.7.4
+  utility-types: 3.10.0
   webpack: 4.41.5_webpack@4.41.5
   webpack-cli: 3.3.10_webpack@4.41.5
   webpack-dev-server: 3.10.1_webpack@4.41.5
@@ -1351,6 +1353,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-yd9c5AdiqVcR+JjcwUQb9DkhJc8ngNr0MahEBGvDiJw8puWab2yZlh+nkasOnZP+EGTAP6rRp2JzJhJZzvNF8g==
+  /deepmerge/4.2.2:
+    dev: false
+    engines:
+      node: '>=0.10.0'
+    resolution:
+      integrity: sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==
   /default-gateway/4.2.0:
     dependencies:
       execa: 1.0.0
@@ -4824,6 +4832,12 @@ packages:
     dev: true
     resolution:
       integrity: sha1-ihagXURWV6Oupe7MWxKk+lN5dyw=
+  /utility-types/3.10.0:
+    dev: true
+    engines:
+      node: '>= 4'
+    resolution:
+      integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==
   /utils-merge/1.0.1:
     dev: true
     engines:
@@ -5185,11 +5199,13 @@ specifiers:
   '@types/node': ^13.1.4
   all-contributors-cli: ^6.12.0
   cross-env: ^6.0.3
+  deepmerge: ^4.2.2
   fp-ts: ^2.3.1
   html-webpack-plugin: ^3.2.0
   source-map-loader: ^0.2.4
   ts-loader: ^6.2.1
   typescript: ^3.7.4
+  utility-types: ^3.10.0
   webpack: ^4.41.5
   webpack-cli: ^3.3.10
   webpack-dev-server: ^3.10.1

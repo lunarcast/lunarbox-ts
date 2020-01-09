@@ -1,6 +1,10 @@
 import { Atom, Cursor } from '@thi.ng/atom'
+import merge from 'deepmerge'
+import { DeepPartial } from 'utility-types'
 import { VNodeList } from '../classes/VNodeList'
+import { defaultVNodeTemplate } from '../constants'
 import { EditorState, VNodeState } from '../types/EditorState'
+import { VNodeTemplate } from '../types/VNodeTemplate'
 
 /**
  * Create a function which spawns nodes.
@@ -14,7 +18,8 @@ export const createNodeSpawner = (
 ) => {
     const id = new Atom(0)
 
-    return () => {
+    return (options: DeepPartial<VNodeTemplate> = {}) => {
+        const template = merge(defaultVNodeTemplate, options) as VNodeTemplate
         const currentId = id.swap(last => last + 1)
 
         // set defaults for the node state
@@ -23,7 +28,8 @@ export const createNodeSpawner = (
             transform: {
                 position: [0, 0],
                 scale: [200, 200]
-            }
+            },
+            template
         })
 
         const nodeState = new Cursor<VNodeState>(state, ['nodes', currentId])
