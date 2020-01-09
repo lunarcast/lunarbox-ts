@@ -20,9 +20,16 @@ export const renderNode = (cell: VNodeListCell) => {
         }
     }
 
+    const height = () => {
+        const textOffset = label.position === 'inside' ? 2 * label.size : 0
+
+        return 2 * shape.strokeWidth + textOffset
+    }
+
     return [
         'g',
         {
+            class: 'unselectable',
             transform: `translate(${transform.position})`
         },
         [
@@ -30,7 +37,7 @@ export const renderNode = (cell: VNodeListCell) => {
             {
                 id: cell.id,
                 width: transform.scale[0],
-                height: transform.scale[1],
+                height: height(),
                 fill: material.fill,
                 opacity: material.opacity,
                 stroke: selected
@@ -46,13 +53,13 @@ export const renderNode = (cell: VNodeListCell) => {
                 x: labelX(),
                 y:
                     label.position === 'inside'
-                        ? shape.strokeWidth + label.size
-                        : -label.size - shape.strokeWidth,
+                        ? shape.strokeWidth + label.size / 2
+                        : -label.size / 2 - shape.strokeWidth,
                 'font-size': label.size,
                 'text-anchor':
                     label.position === 'top-center' ? 'middle' : 'start',
                 'dominant-baseline':
-                    label.position === 'inside' ? null : 'hanging',
+                    label.position === 'inside' ? 'hanging' : null,
                 style: {
                     fill: label.fill
                 }
