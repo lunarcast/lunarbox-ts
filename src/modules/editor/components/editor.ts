@@ -173,7 +173,7 @@ export class Editor implements ILifecycle {
             {
                 style: {
                     ...full,
-                    ...background('#333333', ColorMode.CSS)
+                    ...background('#222222', ColorMode.CSS)
                 }
             },
             ...this.nodeArray.map(renderNode)
