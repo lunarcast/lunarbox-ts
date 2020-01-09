@@ -11,6 +11,5 @@ export interface VNodeState {
  */
 export interface EditorState {
     selectedNodes: Set<number>
-    lastId: number
     nodes: Record<number, VNodeState>
 }

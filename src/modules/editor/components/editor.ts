@@ -10,12 +10,16 @@ import { MouseButtons } from '../../core/constants'
 import { background } from '../../core/styles/background'
 import { full } from '../../core/styles/full'
 import { AppConext } from '../../core/types/AppContext'
+import { VNodeList } from '../classes/VNodeList'
+import { createNodeSpawner } from '../helpers/createNodeSpawner'
 import { EditorState } from '../types/EditorState'
-import { VNode } from './node'
+import { renderNode } from './node'
 
 export class Editor implements ILifecycle {
+    /**
+     * Atom holding state for the entire editor.
+     */
     private state = new Atom<EditorState>({
-        lastId: 0,
         nodes: {},
         selectedNodes: new Set()
     })
@@ -23,13 +27,25 @@ export class Editor implements ILifecycle {
     /**
      * Array with all nodes in the editor.
      */
-    private nodes: VNode[] = [new VNode(this.state), new VNode(this.state)]
+    private nodes = new VNodeList()
 
     /**
-     * Getter for an arry with all the nodes which are curently selected.
+     * Function used to generate new nodes
+     */
+    private spawnNode = createNodeSpawner(this.state, this.nodes)
+
+    /**
+     * Getter for array of all nodes in the editor.
+     */
+    private get nodeArray() {
+        return this.nodes.toArray()
+    }
+
+    /**
+     * Getter for an array with all the nodes which are curently selected.
      */
     private get selectedNodes() {
-        return this.nodes.filter(node => node.state.deref().selected)
+        return this.nodeArray.filter(node => node.state.deref().selected)
     }
 
     /**
@@ -40,6 +56,9 @@ export class Editor implements ILifecycle {
         const mouseMoves = fromEvent(element, 'mousemove')
         const mouseDowns = fromEvent(element, 'mousedown')
         const mouseUps = fromEvent(element, 'mouseup')
+
+        this.spawnNode()
+        this.spawnNode()
 
         // only allow drag
         const drags = mouseMoves.transform(
@@ -154,7 +173,7 @@ export class Editor implements ILifecycle {
                     ...background('#333333', ColorMode.CSS)
                 }
             },
-            ...this.nodes.map(node => [node])
+            ...this.nodeArray.map(renderNode)
         )
     }
 }
