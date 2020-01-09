@@ -7,7 +7,11 @@ import { VNodeListCell } from '../classes/VNodeList'
  */
 export const renderNode = (cell: VNodeListCell) => {
     const { template, selected, transform } = cell.state.deref()
-    const { label, material, shape } = template
+    const { label, material, shape, pins } = template
+
+    const textOffset = label.position === 'inside' ? 2 * label.size : 0
+    const maxPins = Math.max(pins.inputs, pins.outputs)
+    const pinOffest = (maxPins * 2 + 1) * shape.pinRadius * 2
 
     const labelX = () => {
         switch (label.position) {
@@ -20,11 +24,28 @@ export const renderNode = (cell: VNodeListCell) => {
         }
     }
 
-    const height = () => {
-        const textOffset = label.position === 'inside' ? 2 * label.size : 0
+    const height = 2 * shape.strokeWidth + textOffset + pinOffest
 
-        return 2 * shape.strokeWidth + textOffset
+    const pinRenderer = (x: number, offset: number) => (index: number) => {
+        const diameter = 2 * shape.pinRadius
+        const y = (2 * index + 1) * diameter + shape.pinRadius
+
+        return [
+            'circle',
+            {
+                r: shape.pinRadius,
+                cx: x,
+                cy: y + offset,
+                fill: selected ? material.stroke.active : material.stroke.normal
+            }
+        ]
     }
+
+    const inputPinRenderer = pinRenderer(0, textOffset + shape.strokeWidth)
+    const outputPinRenderer = pinRenderer(
+        transform.scale[1],
+        textOffset + shape.strokeWidth
+    )
 
     return [
         'g',
@@ -37,7 +58,7 @@ export const renderNode = (cell: VNodeListCell) => {
             {
                 id: cell.id,
                 width: transform.scale[0],
-                height: height(),
+                height,
                 fill: material.fill,
                 opacity: material.opacity,
                 stroke: selected
@@ -65,6 +86,13 @@ export const renderNode = (cell: VNodeListCell) => {
                 }
             },
             label.text
-        ]
+        ],
+        ...Array(pins.inputs)
+            .fill(1)
+            .map((_, i) => inputPinRenderer(i)),
+
+        ...Array(pins.outputs)
+            .fill(1)
+            .map((_, i) => outputPinRenderer(i))
     ]
 }

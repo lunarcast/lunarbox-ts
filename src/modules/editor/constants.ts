@@ -22,7 +22,12 @@ export const defaultVNodeTemplate: VNodeTemplate = {
     },
     shape: {
         borderRadius: 3,
-        strokeWidth: 5
+        strokeWidth: 5,
+        pinRadius: 10
+    },
+    pins: {
+        inputs: 3,
+        outputs: 2
     }
 }
 

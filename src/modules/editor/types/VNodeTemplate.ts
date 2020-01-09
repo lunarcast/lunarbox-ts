@@ -18,5 +18,10 @@ export interface VNodeTemplate {
     shape: {
         strokeWidth: number
         borderRadius: number
+        pinRadius: number
+    }
+    pins: {
+        inputs: number
+        outputs: number
     }
 }
