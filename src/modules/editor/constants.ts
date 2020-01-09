@@ -1,4 +1,6 @@
 import { VNodeTemplate } from './types/VNodeTemplate'
+import merge from 'deepmerge'
+import { DeepPartial } from 'utility-types'
 
 /**
  * Sane defaults for instantiating nodes.
@@ -8,7 +10,35 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         stroke: {
             active: '#76FF02',
             normal: '#3FC4FF'
-        }
+        },
+        fill: '#3C3C3C',
+        opacity: 0.7
     },
-    name: 'identity'
+    label: {
+        text: 'Identity',
+        size: 30,
+        position: 'inside',
+        fill: 'white'
+    },
+    shape: {
+        borderRadius: 3,
+        strokeWidth: 5
+    }
 }
+
+const topLeftPartial: DeepPartial<VNodeTemplate> = {
+    label: {
+        position: 'top-left',
+        size: 15,
+        fill: 'rgba(180,180,180,0.6)'
+    }
+}
+
+const topCenterPartial: DeepPartial<VNodeTemplate> = {
+    label: {
+        position: 'top-center'
+    }
+}
+
+export const topLeftTemplate = merge(defaultVNodeTemplate, topLeftPartial)
+export const topCenterTemplate = merge(topLeftTemplate, topCenterPartial)

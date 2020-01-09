@@ -14,6 +14,7 @@ import { VNodeList } from '../classes/VNodeList'
 import { createNodeSpawner } from '../helpers/createNodeSpawner'
 import { EditorState } from '../types/EditorState'
 import { renderNode } from './node'
+import { topCenterTemplate, topLeftTemplate } from '../constants'
 
 export class Editor implements ILifecycle {
     /**
@@ -58,7 +59,8 @@ export class Editor implements ILifecycle {
         const mouseUps = fromEvent(element, 'mouseup')
 
         this.spawnNode()
-        this.spawnNode()
+        this.spawnNode(topCenterTemplate)
+        this.spawnNode(topLeftTemplate)
 
         // only allow drag
         const drags = mouseMoves.transform(
