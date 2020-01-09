@@ -89,11 +89,14 @@ export class Editor implements ILifecycle {
                     tx.filter<MouseEvent>(e =>
                         Boolean(e.buttons & MouseButtons.left)
                     ), // only allow left clicks
-                    tx.map(e => (e.target as HTMLElement).id) // only select the data we need
+                    tx.map(e => (e.target as HTMLElement).id), // only select the data we need
+                    tx.map(Number) // cast to number
                 )
             )
             .subscribe({
                 next: id => {
+                    this.nodes.lift(id)
+
                     for (const node of this.nodes) {
                         // unselect everything that was selected
                         if (node.state.deref().selected) {
@@ -101,7 +104,7 @@ export class Editor implements ILifecycle {
                         }
 
                         // select the thing the user clicked on
-                        if (node.id === Number(id)) {
+                        if (node.id === id) {
                             node.state.resetIn('selected', true)
                         }
                     }

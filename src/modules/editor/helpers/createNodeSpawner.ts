@@ -17,8 +17,6 @@ export const createNodeSpawner = (
     return () => {
         const currentId = id.swap(last => last + 1)
 
-        console.log(currentId)
-
         // set defaults for the node state
         state.resetIn<VNodeState>(['nodes', currentId], {
             selected: false,
