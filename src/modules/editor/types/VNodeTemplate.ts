@@ -27,6 +27,7 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     pins: {
+        labels: boolean
         inputs: PinTemplate[]
         outputs: PinTemplate[]
     }

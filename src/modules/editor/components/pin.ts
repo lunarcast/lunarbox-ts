@@ -39,7 +39,7 @@ export const createPinRenderer = (
                 },
                 ['title', pin.label]
             ],
-            [
+            pins.labels && [
                 'text',
                 {
                     'dominant-baseline': 'middle',
@@ -51,6 +51,6 @@ export const createPinRenderer = (
                 },
                 ensureLength(10, pin.label)
             ]
-        ]
+        ].filter(Boolean)
     }
 }

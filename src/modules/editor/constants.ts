@@ -28,6 +28,7 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         pinRadius: 10
     },
     pins: {
+        labels: false,
         inputs: [
             {
                 label: 'first number'
