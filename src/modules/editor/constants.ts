@@ -58,4 +58,4 @@ export const topCenterPartial: DeepPartial<VNodeTemplate> = {
     }
 }
 
-export const topCenterTemplate = merge(topCenterPartial, topLeftTemplate)
+export const topCenterTemplate = merge(topLeftTemplate, topCenterPartial)
