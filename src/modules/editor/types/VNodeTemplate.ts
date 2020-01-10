@@ -1,4 +1,4 @@
-type LabelPosition = 'top-center' | 'top-left' | 'inside'
+type LabelPosition = 'top-center' | 'top-left' | 'inside' | 'bottom-center'
 
 export type PinTemplate = {
     label: string

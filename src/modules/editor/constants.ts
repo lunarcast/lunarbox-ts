@@ -23,7 +23,7 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         description: 'Take the inputs and output their sum.'
     },
     shape: {
-        borderRadius: 3,
+        borderRadius: 2,
         strokeWidth: 5,
         pinRadius: 10
     },
@@ -53,10 +53,17 @@ export const topLeftTemplate: DeepPartial<VNodeTemplate> = {
     }
 }
 
-export const topCenterPartial: DeepPartial<VNodeTemplate> = {
+const topCenterPartial: DeepPartial<VNodeTemplate> = {
     label: {
         position: 'top-center'
     }
 }
 
+const bottomCenterPartial: DeepPartial<VNodeTemplate> = {
+    label: {
+        position: 'bottom-center'
+    }
+}
+
 export const topCenterTemplate = merge(topLeftTemplate, topCenterPartial)
+export const bottomCenterTemplate = merge(topLeftTemplate, bottomCenterPartial)

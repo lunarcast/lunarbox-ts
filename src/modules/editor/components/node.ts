@@ -66,12 +66,20 @@ export const renderNode = (cell: VNodeListCell) => {
                 y:
                     label.position === 'inside'
                         ? shape.strokeWidth + label.size / 2
+                        : label.position === 'bottom-center'
+                        ? nodeHeight + label.size / 2
                         : -label.size / 2 - shape.strokeWidth,
                 'font-size': label.size,
                 'text-anchor':
-                    label.position === 'top-center' ? 'middle' : 'start',
+                    label.position === 'top-center' ||
+                    label.position === 'bottom-center'
+                        ? 'middle'
+                        : 'start',
                 'dominant-baseline':
-                    label.position === 'inside' ? 'hanging' : null,
+                    label.position === 'inside' ||
+                    label.position === 'bottom-center'
+                        ? 'hanging'
+                        : null,
                 style: {
                     fill: label.fill
                 },

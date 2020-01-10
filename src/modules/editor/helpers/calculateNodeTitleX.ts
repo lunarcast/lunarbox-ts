@@ -15,6 +15,7 @@ export const calculateNodeTitleX = ({
         case 'top-left':
             return shape.borderRadius
         case 'top-center':
+        case 'bottom-center':
             return transform.scale[0] / 2
     }
 }
