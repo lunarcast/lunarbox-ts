@@ -1,11 +1,16 @@
 type LabelPosition = 'top-center' | 'top-left' | 'inside'
 
+export type PinTemplate = {
+    label: string
+}
+
 export interface VNodeTemplate {
     label: {
         text: string
         size: number
         fill: string
         position: LabelPosition
+        description: string
     }
     material: {
         stroke: {
@@ -14,6 +19,7 @@ export interface VNodeTemplate {
         }
         opacity: number
         fill: string
+        pinLabelFIll: string
     }
     shape: {
         strokeWidth: number
@@ -21,7 +27,7 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     pins: {
-        inputs: number
-        outputs: number
+        inputs: PinTemplate[]
+        outputs: PinTemplate[]
     }
 }
