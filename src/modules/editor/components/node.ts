@@ -1,5 +1,8 @@
 import { VNodeListCell } from '../classes/VNodeList'
 
+const calculatePinSpace = (total: number, radius: number) =>
+    (total * 2 + 1) * radius * 2
+
 /**
  * Used to render nodes.
  *
@@ -10,8 +13,8 @@ export const renderNode = (cell: VNodeListCell) => {
     const { label, material, shape, pins } = template
 
     const textOffset = label.position === 'inside' ? 2 * label.size : 0
-    const maxPins = Math.max(pins.inputs, pins.outputs)
-    const pinOffest = (maxPins * 2 + 1) * shape.pinRadius * 2
+    const maxPinsCount = Math.max(pins.inputs, pins.outputs)
+    const maximumPinSpace = calculatePinSpace(maxPinsCount, shape.pinRadius)
 
     const labelX = () => {
         switch (label.position) {
@@ -24,27 +27,36 @@ export const renderNode = (cell: VNodeListCell) => {
         }
     }
 
-    const height = 2 * shape.strokeWidth + textOffset + pinOffest
+    const height = 2 * shape.strokeWidth + textOffset + maximumPinSpace
 
-    const pinRenderer = (x: number, offset: number) => (index: number) => {
-        const diameter = 2 * shape.pinRadius
-        const y = (2 * index + 1) * diameter + shape.pinRadius
+    const pinRenderer = (x: number, offset: number, total: number) => (
+        index: number
+    ) => {
+        const y = calculatePinSpace(index, shape.pinRadius) + shape.pinRadius
+        const yOffset =
+            offset +
+            (maximumPinSpace - calculatePinSpace(total, shape.pinRadius)) / 2
 
         return [
             'circle',
             {
                 r: shape.pinRadius,
                 cx: x,
-                cy: y + offset,
+                cy: y + yOffset,
                 fill: selected ? material.stroke.active : material.stroke.normal
             }
         ]
     }
 
-    const inputPinRenderer = pinRenderer(0, textOffset + shape.strokeWidth)
+    const inputPinRenderer = pinRenderer(
+        0,
+        textOffset + shape.strokeWidth,
+        pins.inputs
+    )
     const outputPinRenderer = pinRenderer(
         transform.scale[1],
-        textOffset + shape.strokeWidth
+        textOffset + shape.strokeWidth,
+        pins.outputs
     )
 
     return [
