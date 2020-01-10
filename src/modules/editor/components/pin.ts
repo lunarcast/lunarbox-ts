@@ -12,18 +12,14 @@ import { ensureLength } from '../helpers/ensureLength'
  */
 export const createPinRenderer = (
     nodeType: 1 | -1,
+    scale: [number, number],
     { transform, selected, template: { shape, pins, material } }: VNodeState
 ) => {
     const total = (nodeType === 1 ? pins.inputs : pins.outputs).length
 
     const xOffset =
-        (calculateTotalPinWidth(
-            Math.max(pins.inputs.length, pins.outputs.length),
-            shape.pinRadius
-        ) -
-            calculateTotalPinWidth(total, shape.pinRadius)) /
-        2
-    const y = nodeType === 1 ? 0 : transform.scale[1]
+        (scale[0] - calculateTotalPinWidth(total, shape.pinRadius)) / 2
+    const y = nodeType === 1 ? 0 : scale[1]
 
     return (pin: PinTemplate, index: number) => {
         const rawX =
@@ -35,7 +31,7 @@ export const createPinRenderer = (
                 'circle',
                 {
                     r: shape.pinRadius,
-                    cx: x + shape.strokeWidth,
+                    cx: x,
                     cy: y,
                     fill: selected
                         ? material.stroke.active

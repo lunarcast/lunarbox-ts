@@ -26,6 +26,23 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         strokeWidth: 5,
         pinRadius: 10
     },
+    content: {
+        generate: () => [
+            'foreignObject',
+            { width: 700, height: 300 },
+            [
+                'iframe',
+                {
+                    src: 'https://typing-speed-test.aoeu.eu/?iframe=1;lang=en',
+                    width: '700',
+                    height: '300',
+                    style: 'border: 0;'
+                }
+            ]
+        ],
+        scale: [700, 300],
+        margin: 10
+    },
     pins: {
         inputs: [
             {

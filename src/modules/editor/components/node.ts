@@ -11,14 +11,23 @@ import { createPinRenderer } from './pin'
 export const renderNode = (cell: VNodeListCell) => {
     const state = cell.state.deref()
     const { template, selected, transform } = state
-    const { label, material, shape, pins } = template
+    const { label, material, shape, pins, content } = template
 
     const maxPinsCount = Math.max(pins.inputs.length, pins.outputs.length)
     const totalPinsWidth = calculateTotalPinWidth(maxPinsCount, shape.pinRadius)
-    const nodeWidth = 2 * shape.strokeWidth + totalPinsWidth
+    const nodeWidth = Math.max(
+        2 * shape.strokeWidth + totalPinsWidth,
+        transform.scale[0],
+        content.scale[0] + 2 * content.margin
+    )
+    const nodeHeight = Math.max(
+        transform.scale[1],
+        content.scale[1] + 2 * content.margin + 2 * shape.pinRadius
+    )
+    const scale = [nodeWidth, nodeHeight] as [number, number]
 
-    const inputPinRenderer = createPinRenderer(1, state)
-    const outputPinRenderer = createPinRenderer(-1, state)
+    const inputPinRenderer = createPinRenderer(1, scale, state)
+    const outputPinRenderer = createPinRenderer(-1, scale, state)
 
     const info = [
         `Name: ${label.text}`,
@@ -44,7 +53,7 @@ export const renderNode = (cell: VNodeListCell) => {
             {
                 id: cell.id,
                 width: nodeWidth,
-                height: transform.scale[1],
+                height: nodeHeight,
                 fill: material.fill,
                 opacity: material.opacity,
                 stroke: selected
@@ -58,7 +67,7 @@ export const renderNode = (cell: VNodeListCell) => {
             'text',
             {
                 x: nodeWidth + 2 * shape.strokeWidth + label.size / 2,
-                y: transform.scale[1] / 2,
+                y: nodeHeight / 2,
                 'font-size': label.size,
                 'dominant-baseline': 'middle',
                 'text-anchor': 'start',
@@ -73,6 +82,14 @@ export const renderNode = (cell: VNodeListCell) => {
             'g',
             ...pins.inputs.flatMap(inputPinRenderer),
             ...pins.outputs.flatMap(outputPinRenderer)
+        ],
+        [
+            'g',
+            {
+                transform: `translate(${content.margin},${content.margin +
+                    shape.pinRadius})`
+            },
+            content.generate(cell.state)
         ]
     ]
 }
