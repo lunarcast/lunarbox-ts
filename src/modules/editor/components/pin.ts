@@ -1,4 +1,4 @@
-import { calculateTotalPinHeight } from '../helpers/calculateTotalPinHeight'
+import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
 import { PinTemplate } from '../types/VNodeTemplate'
 import { ensureLength } from '../helpers/ensureLength'
@@ -12,45 +12,37 @@ import { ensureLength } from '../helpers/ensureLength'
  */
 export const createPinRenderer = (
     nodeType: 1 | -1,
-    maximumHeight: number,
     { transform, selected, template: { shape, pins, material } }: VNodeState
 ) => {
     const total = (nodeType === 1 ? pins.inputs : pins.outputs).length
 
-    const yOffset =
-        (maximumHeight - calculateTotalPinHeight(total, shape.pinRadius)) / 2
-    const x = nodeType === 1 ? 0 : transform.scale[0]
+    const xOffset =
+        (calculateTotalPinWidth(
+            Math.max(pins.inputs.length, pins.outputs.length),
+            shape.pinRadius
+        ) -
+            calculateTotalPinWidth(total, shape.pinRadius)) /
+        2
+    const y = nodeType === 1 ? 0 : transform.scale[1]
 
     return (pin: PinTemplate, index: number) => {
-        const rawY =
-            calculateTotalPinHeight(index, shape.pinRadius) + shape.pinRadius
-        const y = rawY + yOffset
+        const rawX =
+            calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
+        const x = rawX + xOffset
 
         return [
             [
                 'circle',
                 {
                     r: shape.pinRadius,
-                    cx: x,
+                    cx: x + shape.strokeWidth,
                     cy: y,
                     fill: selected
                         ? material.stroke.active
                         : material.stroke.normal
                 },
                 ['title', pin.label]
-            ],
-            pins.labels && [
-                'text',
-                {
-                    'dominant-baseline': 'middle',
-                    'text-anchor': nodeType === 1 ? 'start' : 'end',
-                    y,
-                    x: x + nodeType * shape.pinRadius * 2,
-                    fill: material.pinLabelFIll,
-                    class: 'overpass'
-                },
-                ensureLength(10, pin.label)
             ]
-        ].filter(Boolean)
+        ]
     }
 }

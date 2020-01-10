@@ -1,5 +1,3 @@
-type LabelPosition = 'top-center' | 'top-left' | 'inside' | 'bottom-center'
-
 export type PinTemplate = {
     label: string
 }
@@ -9,7 +7,6 @@ export interface VNodeTemplate {
         text: string
         size: number
         fill: string
-        position: LabelPosition
         description: string
     }
     material: {
@@ -27,7 +24,6 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     pins: {
-        labels: boolean
         inputs: PinTemplate[]
         outputs: PinTemplate[]
     }

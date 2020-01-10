@@ -27,7 +27,7 @@ export const createNodeSpawner = (
             selected: false,
             transform: {
                 position: [0, 0],
-                scale: [50, 100]
+                scale: [0, 50]
             },
             template
         })

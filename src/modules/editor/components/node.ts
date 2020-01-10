@@ -1,8 +1,7 @@
 import { VNodeListCell } from '../classes/VNodeList'
-import { calculateNodeTitleX } from '../helpers/calculateNodeTitleX'
-import { calculateTotalPinHeight } from '../helpers/calculateTotalPinHeight'
-import { createPinRenderer } from './pin'
 import { bullet } from '../helpers/bullet'
+import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
+import { createPinRenderer } from './pin'
 
 /**
  * Used to render nodes.
@@ -14,16 +13,12 @@ export const renderNode = (cell: VNodeListCell) => {
     const { template, selected, transform } = state
     const { label, material, shape, pins } = template
 
-    const textHeight = label.position === 'inside' ? 2 * label.size : 0
     const maxPinsCount = Math.max(pins.inputs.length, pins.outputs.length)
-    const totalPinsHeight = calculateTotalPinHeight(
-        maxPinsCount,
-        shape.pinRadius
-    )
-    const nodeHeight = 2 * shape.strokeWidth + textHeight + totalPinsHeight
+    const totalPinsWidth = calculateTotalPinWidth(maxPinsCount, shape.pinRadius)
+    const nodeWidth = 2 * shape.strokeWidth + totalPinsWidth
 
-    const inputPinRenderer = createPinRenderer(1, totalPinsHeight, state)
-    const outputPinRenderer = createPinRenderer(-1, totalPinsHeight, state)
+    const inputPinRenderer = createPinRenderer(1, state)
+    const outputPinRenderer = createPinRenderer(-1, state)
 
     const info = [
         `Name: ${label.text}`,
@@ -48,8 +43,8 @@ export const renderNode = (cell: VNodeListCell) => {
             'rect',
             {
                 id: cell.id,
-                width: transform.scale[0],
-                height: nodeHeight,
+                width: nodeWidth,
+                height: transform.scale[1],
                 fill: material.fill,
                 opacity: material.opacity,
                 stroke: selected
@@ -62,24 +57,11 @@ export const renderNode = (cell: VNodeListCell) => {
         [
             'text',
             {
-                x: calculateNodeTitleX(state),
-                y:
-                    label.position === 'inside'
-                        ? shape.strokeWidth + label.size / 2
-                        : label.position === 'bottom-center'
-                        ? nodeHeight + label.size / 2
-                        : -label.size / 2 - shape.strokeWidth,
+                x: nodeWidth + 2 * shape.strokeWidth + label.size / 2,
+                y: transform.scale[1] / 2,
                 'font-size': label.size,
-                'text-anchor':
-                    label.position === 'top-center' ||
-                    label.position === 'bottom-center'
-                        ? 'middle'
-                        : 'start',
-                'dominant-baseline':
-                    label.position === 'inside' ||
-                    label.position === 'bottom-center'
-                        ? 'hanging'
-                        : null,
+                'dominant-baseline': 'middle',
+                'text-anchor': 'start',
                 style: {
                     fill: label.fill
                 },
@@ -89,7 +71,6 @@ export const renderNode = (cell: VNodeListCell) => {
         ],
         [
             'g',
-            { transform: `translate(0,${textHeight + shape.strokeWidth})` },
             ...pins.inputs.flatMap(inputPinRenderer),
             ...pins.outputs.flatMap(outputPinRenderer)
         ]

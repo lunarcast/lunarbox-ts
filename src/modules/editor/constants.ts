@@ -17,9 +17,8 @@ export const defaultVNodeTemplate: VNodeTemplate = {
     },
     label: {
         text: 'Add',
-        size: 30,
-        position: 'inside',
-        fill: 'white',
+        size: 20,
+        fill: 'rgba(180,180,180,0.6)',
         description: 'Take the inputs and output their sum.'
     },
     shape: {
@@ -28,7 +27,6 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         pinRadius: 10
     },
     pins: {
-        labels: false,
         inputs: [
             {
                 label: 'first number'
@@ -44,26 +42,3 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         ]
     }
 }
-
-export const topLeftTemplate: DeepPartial<VNodeTemplate> = {
-    label: {
-        position: 'top-left',
-        size: 15,
-        fill: 'rgba(180,180,180,0.6)'
-    }
-}
-
-const topCenterPartial: DeepPartial<VNodeTemplate> = {
-    label: {
-        position: 'top-center'
-    }
-}
-
-const bottomCenterPartial: DeepPartial<VNodeTemplate> = {
-    label: {
-        position: 'bottom-center'
-    }
-}
-
-export const topCenterTemplate = merge(topLeftTemplate, topCenterPartial)
-export const bottomCenterTemplate = merge(topLeftTemplate, bottomCenterPartial)
