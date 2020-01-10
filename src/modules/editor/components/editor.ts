@@ -14,6 +14,7 @@ import { VNodeList } from '../classes/VNodeList'
 import { createNodeSpawner } from '../helpers/createNodeSpawner'
 import { EditorState } from '../types/EditorState'
 import { renderNode } from './node'
+import { Nullable } from '@thi.ng/api'
 
 export class Editor implements ILifecycle {
     /**
@@ -88,7 +89,28 @@ export class Editor implements ILifecycle {
                     tx.filter<MouseEvent>(e =>
                         Boolean(e.buttons & MouseButtons.left)
                     ), // only allow left clicks
-                    tx.map(e => (e.target as HTMLElement).id), // only select the data we need
+                    tx.map(e => {
+                        let target = e.target as Nullable<HTMLElement>
+
+                        if (!target) {
+                            return null
+                        }
+
+                        while (!target.id.startsWith('node-')) {
+                            if (target.parentElement) {
+                                target = target?.parentElement
+                            } else {
+                                console.log('here')
+
+                                return null
+                            }
+                        }
+
+                        console.log(target.id)
+
+                        return target.id.substr('node-'.length)
+                    }), // only select the data we need
+                    tx.filter(Boolean),
                     tx.map(Number) // cast to number
                 )
             )

@@ -1,6 +1,7 @@
 import { VNodeTemplate } from './types/VNodeTemplate'
 import merge from 'deepmerge'
 import { DeepPartial } from 'utility-types'
+import { renderNode } from './components/node'
 
 /**
  * Sane defaults for instantiating nodes.
@@ -27,21 +28,13 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         pinRadius: 10
     },
     content: {
-        generate: () => [
-            'foreignObject',
-            { width: 700, height: 300 },
-            [
-                'iframe',
-                {
-                    src: 'https://typing-speed-test.aoeu.eu/?iframe=1;lang=en',
-                    width: '700',
-                    height: '300',
-                    style: 'border: 0;'
-                }
-            ]
+        generate: ({ state }) => [
+            'text',
+            { style: { fill: 'white', 'dominant-baseline': 'middle' } },
+            state.deref().selected
         ],
-        scale: [700, 300],
-        margin: 10
+        scale: [30, 5],
+        margin: 20
     },
     pins: {
         inputs: [

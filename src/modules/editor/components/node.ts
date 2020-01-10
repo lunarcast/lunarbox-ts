@@ -2,6 +2,7 @@ import { VNodeListCell } from '../classes/VNodeList'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { createPinRenderer } from './pin'
+import { sub2, divN2, add2 } from '@thi.ng/vectors'
 
 /**
  * Used to render nodes.
@@ -51,7 +52,7 @@ export const renderNode = (cell: VNodeListCell) => {
         [
             'rect',
             {
-                id: cell.id,
+                id: `node-${cell.id}`,
                 width: nodeWidth,
                 height: nodeHeight,
                 fill: material.fill,
@@ -86,10 +87,14 @@ export const renderNode = (cell: VNodeListCell) => {
         [
             'g',
             {
-                transform: `translate(${content.margin},${content.margin +
-                    shape.pinRadius})`
+                id: `node-${cell.id}`,
+                transform: `translate(${divN2(
+                    null,
+                    sub2([], scale, content.scale),
+                    2
+                )})`
             },
-            content.generate(cell.state)
+            content.generate(cell)
         ]
     ]
 }

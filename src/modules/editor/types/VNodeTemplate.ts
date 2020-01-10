@@ -1,5 +1,6 @@
 import { VNodeState } from './EditorState'
 import { Cursor } from '@thi.ng/atom'
+import { VNodeListCell } from '../classes/VNodeList'
 export type PinTemplate = {
     label: string
 }
@@ -26,7 +27,7 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     content: {
-        generate: (v: Cursor<VNodeState>) => unknown
+        generate: (v: VNodeListCell) => unknown
         scale: [number, number]
         margin: number
     }
