@@ -1,8 +1,8 @@
+import { divN2, sub2 } from '@thi.ng/vectors'
 import { VNodeListCell } from '../classes/VNodeList'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { createPinRenderer } from './pin'
-import { sub2, divN2, add2 } from '@thi.ng/vectors'
 
 /**
  * Used to render nodes.

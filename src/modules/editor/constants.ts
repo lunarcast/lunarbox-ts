@@ -1,7 +1,4 @@
 import { VNodeTemplate } from './types/VNodeTemplate'
-import merge from 'deepmerge'
-import { DeepPartial } from 'utility-types'
-import { renderNode } from './components/node'
 
 /**
  * Sane defaults for instantiating nodes.
