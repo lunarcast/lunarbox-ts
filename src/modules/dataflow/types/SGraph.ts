@@ -1,5 +1,6 @@
 import { Stream } from '@thi.ng/rstream'
 import { Label, SVariableInstance } from '../../typeChecking/types/Labels'
+import { voideNode } from '../constants'
 
 /**
  * Currently supported node kinds.
@@ -7,7 +8,8 @@ import { Label, SVariableInstance } from '../../typeChecking/types/Labels'
 export enum SNodeKinds {
     general,
     input,
-    output
+    output,
+    unique
 }
 
 /**
@@ -112,5 +114,6 @@ export type SNodeOfKind<T extends SNodeKinds> = SNode & {
         [SNodeKinds.general]: SNodeKinds.general
         [SNodeKinds.input]: SNodeKinds.input
         [SNodeKinds.output]: SNodeKinds.output
+        [SNodeKinds.unique]: SNodeKinds.unique
     }[T]
 }
