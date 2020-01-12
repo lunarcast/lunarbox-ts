@@ -69,7 +69,7 @@ export type SOutputPin = {
     /**
      * Method to compute the output type based on the input ones.
      */
-    computeOutputKind: (inputTypes: Label[]) => Label
+    computeOutputLabel: (inputTypes: Label[]) => Label
 
     /**
      * Stream pusing the latest values.

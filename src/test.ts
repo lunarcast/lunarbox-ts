@@ -23,7 +23,7 @@ const constantNode = <T extends SVariableInstance>(
             outputs: [
                 {
                     source: output,
-                    computeOutputKind: () => value.type
+                    computeOutputLabel: () => value.type
                 }
             ]
         },
@@ -73,7 +73,7 @@ const adder: SNode = {
     outputs: [
         {
             source: adderSource,
-            computeOutputKind: ([a, b]) => (a === b ? a : Label.void)
+            computeOutputLabel: ([a, b]) => (a === b ? a : Label.void)
         }
     ],
     transformation: inputs => [

@@ -24,6 +24,6 @@ export const getOutputPinLabel = (
     return pipe(
         startInputLabels,
         Array.array.sequence(Either.either),
-        Either.map(start.computeOutputKind)
+        Either.map(start.computeOutputLabel)
     )
 }

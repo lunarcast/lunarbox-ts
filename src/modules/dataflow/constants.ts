@@ -11,7 +11,7 @@ export const voideNode: SNode = {
     transformation: () => [],
     outputs: [
         {
-            computeOutputKind: () => Label.void,
+            computeOutputLabel: () => Label.void,
             source: stream()
         }
     ]
