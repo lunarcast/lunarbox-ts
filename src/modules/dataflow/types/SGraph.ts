@@ -1,6 +1,6 @@
 import { Stream } from '@thi.ng/rstream'
 import { Label, SVariableInstance } from '../../typeChecking/types/Labels'
-import { voideNode } from '../constants'
+import { IO } from 'fp-ts/es6/IO'
 
 /**
  * Currently supported node kinds.
@@ -34,7 +34,7 @@ export type SConnection = {
      * }
      * ```
      */
-    node: () => SNode
+    node: IO<SNode>
 }
 
 /**

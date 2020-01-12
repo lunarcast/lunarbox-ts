@@ -1,6 +1,7 @@
-import { fromIterable, metaStream, pubsub, stream, sync } from '@thi.ng/rstream'
+import { pubsub, sync } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
 import * as Either from 'fp-ts/es6/Either'
+import * as IO from 'fp-ts/es6/IO'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { unkownTypeError } from '../../typeChecking/constants'
 import { getConnectionStart } from '../../typeChecking/helpers/getConnectionStart'
@@ -21,7 +22,7 @@ export const initGraph = (_module: SNode[]) => {
             if (
                 pipe(
                     type,
-                    Either.filterOrElse(isUnknown, () => unkownTypeError),
+                    Either.filterOrElse(isUnknown, IO.of(unkownTypeError)),
                     Either.isLeft
                 )
             ) {
@@ -40,20 +41,15 @@ export const initGraph = (_module: SNode[]) => {
             return getConnectionStart(connection).source
         })
 
-        const merged = sync<
+        const indexedResults = sync<
             SVariableInstance,
             Record<string, SVariableInstance>
         >({
-            src: streams,
-            all: true
-        }).transform(tx.map(o => Object.values(o)))
-
-        const results = merged.transform(tx.map(node.transformation))
-
-        const indexedResults = results.subscribe(
-            metaStream((inputs: SVariableInstance[]) =>
-                fromIterable(tx.indexed(inputs))
-            )
+            src: streams
+        }).transform(
+            tx.map(Object.values),
+            tx.mapcat(node.transformation),
+            tx.indexed()
         )
 
         const splitter = pubsub({
@@ -63,12 +59,12 @@ export const initGraph = (_module: SNode[]) => {
         indexedResults.subscribe(splitter)
 
         for (let index = 0; index < node.outputs.length; index++) {
-            const pipe = stream<[number, SVariableInstance]>().transform(
-                tx.map(v => v[1])
-            )
-
-            splitter.subscribeTopic(index, pipe)
-            pipe.subscribe(node.outputs[index].source)
+            splitter
+                .subscribeTopic(
+                    index,
+                    tx.map(v => v[1])
+                )
+                .subscribe(node.outputs[index].source)
         }
     }
 }
