@@ -5,7 +5,7 @@ import { stream } from '@thi.ng/rstream'
 /**
  * Empty node.
  */
-export const voideNode: SNode = {
+export const voidNode: SNode = {
     kind: SNodeKinds.unique,
     inputs: [],
     transformation: () => [],

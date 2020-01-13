@@ -90,7 +90,7 @@ export class VNodeList {
     }
 
     /**
-     * Iterate over all the ndoes in the list.
+     * Iterate over all the nodes in the list.
      */
     public *[Symbol.iterator]() {
         let node = this.head

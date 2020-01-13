@@ -5,7 +5,7 @@ import * as tx from '@thi.ng/transducers'
  * Filters out all gestures which don't match the
  * given type and return the gesture info
  *
- * @param type The type of the gesure to allow.
+ * @param type The type of the gesture to allow.
  */
 export const gestureOfType = (type: GestureType) =>
     tx.comp(

@@ -9,7 +9,7 @@ import { getInputPinLabels } from './getInputPinLabels'
 /**
  * Infers the label for any output pin.
  *
- * @notice Will return void if the label cannot be infered.
+ * @notice Will return void if the label cannot be inferred.
  *
  * @param connection The connection pointing to the pin to get the label of.
  * @param visitedInputs Optional set of inputs already visited. Used to prevent infinite recursion.

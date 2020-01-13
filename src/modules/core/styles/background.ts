@@ -1,7 +1,7 @@
 import { IColor, asCSS } from '@thi.ng/color'
 
 /**
- * Mixin to set the backgounrd color of an element.
+ * Mixin to set the background color of an element.
  *
  * @param color The color to use for the background.
  */

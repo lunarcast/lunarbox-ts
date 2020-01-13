@@ -3,7 +3,7 @@ import * as tx from '@thi.ng/transducers'
 import * as Either from 'fp-ts/es6/Either'
 import * as IO from 'fp-ts/es6/IO'
 import { pipe } from 'fp-ts/es6/pipeable'
-import { unkownTypeError } from '../../typeChecking/constants'
+import { unknownTypeError } from '../../typeChecking/constants'
 import { getConnectionStart } from '../../typeChecking/helpers/getConnectionStart'
 import { getInputPinLabel } from '../../typeChecking/helpers/getInputPinLabels'
 import { isUnknown } from '../../typeChecking/helpers/isUnknown'
@@ -22,7 +22,7 @@ export const initGraph = (_module: SNode[]) => {
             if (
                 pipe(
                     type,
-                    Either.filterOrElse(isUnknown, IO.of(unkownTypeError)),
+                    Either.filterOrElse(isUnknown, IO.of(unknownTypeError)),
                     Either.isLeft
                 )
             ) {
@@ -36,7 +36,7 @@ export const initGraph = (_module: SNode[]) => {
             // This comment was from a random joke you most probably can't understand
             // So just skip over it please:
 
-            // I din't to it, it wasn't me!!! See? I am coding!!!
+            // I didn't to it, it wasn't me!!! See? I am coding!!!
 
             return getConnectionStart(connection).source
         })

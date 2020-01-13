@@ -1,7 +1,7 @@
 import { VNodeTemplate } from './VNodeTemplate'
 
 /**
- * State used to render ndoes.
+ * State used to render nodes.
  */
 export interface VNodeState {
     transform: {

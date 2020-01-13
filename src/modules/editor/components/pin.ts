@@ -4,7 +4,7 @@ import { PinTemplate } from '../types/VNodeTemplate'
 import { ensureLength } from '../helpers/ensureLength'
 
 /**
- * Creates a render to for pins of a certian type following a few constraints.
+ * Creates a render to for pins of a certain type following a few constraints.
  *
  * @param nodeType The type of the pins: 1 means input and -1 means output.
  * @param maximumHeight The maximum height the pins can take

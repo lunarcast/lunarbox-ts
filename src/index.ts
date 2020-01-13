@@ -2,11 +2,11 @@ import { merge, stream, trigger } from '@thi.ng/rstream'
 import * as tx from '@thi.ng/transducers'
 import { updateDOM } from '@thi.ng/transducers-hdom'
 import { app } from './modules/core/components/app'
-import { AppConext } from './modules/core/types/AppContext'
+import { AppContext } from './modules/core/types/AppContext'
 
-const globalStreams: AppConext['reactingTo'] = stream()
+const globalStreams: AppContext['reactingTo'] = stream()
 
-const initialContext: AppConext = {
+const initialContext: AppContext = {
     reactingTo: globalStreams
 }
 

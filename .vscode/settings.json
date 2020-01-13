@@ -1,0 +1,16 @@
+{
+    "cSpell.words": [
+        "dedupe",
+        "deepmerge",
+        "deref",
+        "hdom",
+        "i",
+        "lifecycle",
+        "mapcat",
+        "pipeable",
+        "pubsub",
+        "rstream",
+        "unselectable"
+    ],
+    "editor.formatOnSave": true
+}

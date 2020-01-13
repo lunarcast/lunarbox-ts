@@ -37,10 +37,10 @@ export const getInputPinLabel = (
     return pipe(
         type,
         Either.chain(found => {
-            const succes = pin.labelConstraint(found)
+            const success = pin.labelConstraint(found)
 
             // in case of no errors we just return the type we found
-            if (succes) {
+            if (success) {
                 return Either.right(found)
             }
 
@@ -50,7 +50,7 @@ export const getInputPinLabel = (
                 expected: pin.labelName
             }
 
-            // create an error builder for the type missmatch
+            // create an error builder for the type mismatch
             const buildError = createLabelValidationError(
                 LabelValidationFailureReasons.typeMismatch
             )

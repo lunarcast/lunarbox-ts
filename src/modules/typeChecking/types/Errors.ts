@@ -7,7 +7,7 @@ import { Label } from './Labels'
  */
 export enum LabelValidationFailureReasons {
     typeMismatch,
-    unkownType
+    unknownType
 }
 
 /**
@@ -20,7 +20,7 @@ export type LabelValidationFailureReasonToType<
         expected: string
         found: Label
     }
-    [LabelValidationFailureReasons.unkownType]: {}
+    [LabelValidationFailureReasons.unknownType]: {}
 }[T]
 
 /**

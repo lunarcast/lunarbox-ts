@@ -9,7 +9,7 @@ import * as Option from 'fp-ts/es6/Option'
 import { MouseButtons } from '../../core/constants'
 import { background } from '../../core/styles/background'
 import { full } from '../../core/styles/full'
-import { AppConext } from '../../core/types/AppContext'
+import { AppContext } from '../../core/types/AppContext'
 import { VNodeList } from '../classes/VNodeList'
 import { createNodeSpawner } from '../helpers/createNodeSpawner'
 import { EditorState } from '../types/EditorState'
@@ -43,7 +43,7 @@ export class Editor implements ILifecycle {
     }
 
     /**
-     * Getter for an array with all the nodes which are curently selected.
+     * Getter for an array with all the nodes which are currently selected.
      */
     private get selectedNodes() {
         return this.nodeArray.filter(node => node.state.deref().selected)
@@ -52,7 +52,7 @@ export class Editor implements ILifecycle {
     /**
      * Called by hdom when the element is added to the dom.
      */
-    public init(element: HTMLElement, ctx: AppConext) {
+    public init(element: HTMLElement, ctx: AppContext) {
         // mount event listeners
         const mouseMoves = fromEvent(element, 'mousemove')
         const mouseDowns = fromEvent(element, 'mousedown')
@@ -70,7 +70,7 @@ export class Editor implements ILifecycle {
             Option.none
         )
 
-        // runs when the user stops holding the mosue
+        // runs when the user stops holding the mouse
         mouseUps.subscribe({
             next: () => {
                 // no more delta values
@@ -185,7 +185,7 @@ export class Editor implements ILifecycle {
     /**
      * Called by hdom on each render.
      */
-    public render(c: AppConext) {
+    public render(c: AppContext) {
         return svg(
             {
                 style: {

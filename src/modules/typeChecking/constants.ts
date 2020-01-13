@@ -1,8 +1,8 @@
 import { LabelValidationFailureReasons } from './types/Errors'
 
 /**
- * Error which should be thrown when finding a type which cannot be infered.
+ * Error which should be thrown when finding a type which cannot be inferred.
  */
-export const unkownTypeError = {
-    reason: LabelValidationFailureReasons.unkownType
+export const unknownTypeError = {
+    reason: LabelValidationFailureReasons.unknownType
 }

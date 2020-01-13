@@ -72,7 +72,7 @@ export type SOutputPin = {
     computeOutputLabel: (inputTypes: Label[]) => Label
 
     /**
-     * Stream pusing the latest values.
+     * Stream pushing the latest values.
      */
     source: Stream<SVariableInstance>
 }

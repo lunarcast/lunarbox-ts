@@ -1,6 +1,5 @@
-import { VNodeState } from './EditorState'
-import { Cursor } from '@thi.ng/atom'
 import { VNodeListCell } from '../classes/VNodeList'
+
 export type PinTemplate = {
     label: string
 }

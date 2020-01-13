@@ -1,6 +1,6 @@
 /**
  * Takes some text and a length and returns a string of
- * the text with the desired lenght (In case the text is too long adds ... at the end)
+ * the text with the desired length (In case the text is too long adds ... at the end)
  *
  * @param length The desired length for the text.
  * @param text The text to process.
