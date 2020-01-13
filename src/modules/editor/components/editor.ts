@@ -100,13 +100,9 @@ export class Editor implements ILifecycle {
                             if (target.parentElement) {
                                 target = target?.parentElement
                             } else {
-                                console.log('here')
-
                                 return null
                             }
                         }
-
-                        console.log(target.id)
 
                         return target.id.substr('node-'.length)
                     }), // only select the data we need
