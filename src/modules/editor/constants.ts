@@ -25,10 +25,10 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         pinRadius: 10
     },
     content: {
-        generate: ({ state }) => [
+        generate: ({ selected }) => [
             'text',
             { style: { fill: 'white', 'dominant-baseline': 'middle' } },
-            state.deref().selected
+            selected
         ],
         scale: [30, 5],
         margin: 20

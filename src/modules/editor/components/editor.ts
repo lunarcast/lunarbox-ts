@@ -121,7 +121,7 @@ export class Editor implements ILifecycle {
                         }
 
                         // select the thing the user clicked on
-                        if (node.id === id) {
+                        if (node.state.deref().id === id) {
                             node.state.resetIn('selected', true)
                         }
                     }
@@ -193,7 +193,7 @@ export class Editor implements ILifecycle {
                     ...background('#222222', ColorMode.CSS)
                 }
             },
-            ['g', ...this.nodeArray.map(renderNode)]
+            ['g', ...this.nodeArray.map(node => renderNode(node.state.deref()))]
         )
     }
 }

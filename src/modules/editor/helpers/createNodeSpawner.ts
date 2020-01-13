@@ -29,11 +29,12 @@ export const createNodeSpawner = (
                 position: [0, 0],
                 scale: [0, 50]
             },
-            template
+            template,
+            id: currentId
         })
 
         const nodeState = new Cursor<VNodeState>(state, ['nodes', currentId])
 
-        nodes.spawn(currentId, nodeState)
+        nodes.spawn(nodeState)
     }
 }

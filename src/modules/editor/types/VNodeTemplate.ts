@@ -1,4 +1,4 @@
-import { VNodeListCell } from '../classes/VNodeList'
+import { VNodeState } from './EditorState'
 
 export type PinTemplate = {
     label: string
@@ -26,7 +26,7 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     content: {
-        generate: (v: VNodeListCell) => unknown
+        generate: (v: VNodeState) => unknown
         scale: [number, number]
         margin: number
     }

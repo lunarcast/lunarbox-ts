@@ -3,16 +3,20 @@ import { VNodeListCell } from '../classes/VNodeList'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { createPinRenderer } from './pin'
+import { VNodeState } from '../types/EditorState'
 
 /**
  * Used to render nodes.
  *
  * @param current The current state of the node.
  */
-export const renderNode = (cell: VNodeListCell) => {
-    const state = cell.state.deref()
-    const { template, selected, transform } = state
-    const { label, material, shape, pins, content } = template
+export const renderNode = (state: VNodeState) => {
+    const {
+        template: { label, material, shape, pins, content },
+        selected,
+        transform,
+        id
+    } = state
 
     const maxPinsCount = Math.max(pins.inputs.length, pins.outputs.length)
     const totalPinsWidth = calculateTotalPinWidth(maxPinsCount, shape.pinRadius)
@@ -49,11 +53,10 @@ export const renderNode = (cell: VNodeListCell) => {
             transform: `translate(${transform.position})`
         },
         ['title', info],
-
         [
             'rect',
             {
-                id: `node-${cell.id}`,
+                id: `node-${id}`,
                 width: nodeWidth,
                 height: nodeHeight,
                 fill: material.fill,
@@ -88,14 +91,14 @@ export const renderNode = (cell: VNodeListCell) => {
         [
             'g',
             {
-                id: `node-${cell.id}`,
+                id: `node-${id}`,
                 transform: `translate(${divN2(
                     null,
                     sub2([], scale, content.scale),
                     2
                 )})`
             },
-            content.generate(cell)
+            content.generate(state)
         ]
     ]
 }

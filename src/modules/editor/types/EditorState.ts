@@ -10,6 +10,7 @@ export interface VNodeState {
     }
     template: VNodeTemplate
     selected: boolean
+    id: number
 }
 
 /**

@@ -9,13 +9,11 @@ export class VNodeListCell {
      * @param next The next node in the list.
      * @param previous The previous node in the list.
      * @param state The data to store.
-     * @param id The id of the node
      */
     public constructor(
         public next: Nullable<VNodeListCell>,
         public previous: Nullable<VNodeListCell>,
-        public state: Cursor<VNodeState>,
-        public id: number
+        public state: Cursor<VNodeState>
     ) {}
 }
 
@@ -63,11 +61,11 @@ export class VNodeList {
      *
      * @param data The state of the node to add.
      */
-    public spawn(id: number, data: Cursor<VNodeState>) {
-        const newNode = new VNodeListCell(null, null, data, id)
+    public spawn(data: Cursor<VNodeState>) {
+        const newNode = new VNodeListCell(null, null, data)
 
-        this.hashmap.set(id, newNode)
-        this.lift(id)
+        this.hashmap.set(data.deref().id, newNode)
+        this.lift(data.deref().id)
     }
 
     /**

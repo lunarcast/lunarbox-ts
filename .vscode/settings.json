@@ -4,12 +4,12 @@
         "deepmerge",
         "deref",
         "hdom",
-        "i",
         "lifecycle",
         "mapcat",
         "pipeable",
         "pubsub",
         "rstream",
+        "stateful",
         "unselectable"
     ],
     "editor.formatOnSave": true
