@@ -1,7 +1,6 @@
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
 import { PinTemplate } from '../types/VNodeTemplate'
-import { ensureLength } from '../helpers/ensureLength'
 
 /**
  * Creates a render to for pins of a certain type following a few constraints.

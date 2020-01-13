@@ -1,9 +1,8 @@
 import { divN2, sub2 } from '@thi.ng/vectors'
-import { VNodeListCell } from '../classes/VNodeList'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
-import { createPinRenderer } from './pin'
 import { VNodeState } from '../types/EditorState'
+import { createPinRenderer } from './pin'
 
 /**
  * Used to render nodes.
@@ -18,17 +17,22 @@ export const renderNode = (state: VNodeState) => {
         id
     } = state
 
-    const maxPinsCount = Math.max(pins.inputs.length, pins.outputs.length)
-    const totalPinsWidth = calculateTotalPinWidth(maxPinsCount, shape.pinRadius)
+    const totalPinsWidth = calculateTotalPinWidth(
+        Math.max(pins.inputs.length, pins.outputs.length),
+        shape.pinRadius
+    )
+
     const nodeWidth = Math.max(
         2 * shape.strokeWidth + totalPinsWidth,
         transform.scale[0],
         content.scale[0] + 2 * content.margin
     )
+
     const nodeHeight = Math.max(
         transform.scale[1],
-        content.scale[1] + 2 * content.margin + 2 * shape.pinRadius
+        content.scale[1] + 2 * (content.margin + shape.pinRadius)
     )
+
     const scale = [nodeWidth, nodeHeight] as [number, number]
 
     const inputPinRenderer = createPinRenderer(1, scale, state)
@@ -61,9 +65,7 @@ export const renderNode = (state: VNodeState) => {
                 height: nodeHeight,
                 fill: material.fill,
                 opacity: material.opacity,
-                stroke: selected
-                    ? material.stroke.active
-                    : material.stroke.normal,
+                stroke: material.stroke[selected ? 'active' : 'normal'],
                 'stroke-width': shape.strokeWidth,
                 rx: shape.borderRadius
             }
