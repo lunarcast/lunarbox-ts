@@ -1,3 +1,4 @@
+import { Nullable } from '@thi.ng/api'
 import { Atom } from '@thi.ng/atom'
 import { ColorMode } from '@thi.ng/color'
 import { ILifecycle } from '@thi.ng/hdom'
@@ -14,7 +15,6 @@ import { VNodeList } from '../classes/VNodeList'
 import { createNodeSpawner } from '../helpers/createNodeSpawner'
 import { EditorState } from '../types/EditorState'
 import { renderNode } from './node'
-import { Nullable } from '@thi.ng/api'
 
 export class Editor implements ILifecycle {
     /**

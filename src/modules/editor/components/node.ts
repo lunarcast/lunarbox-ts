@@ -4,75 +4,6 @@ import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { createPinRenderer } from './pin'
 
-interface DropShadowOpts {
-    id: string
-    offset: [number, number]
-    blur: number
-    opacity: number
-    fill: string
-}
-
-const dropShadow = ({ opacity, id, offset, blur, fill }: DropShadowOpts) => {
-    return [
-        'filter',
-        { id, height: '130%' },
-        [
-            'feDropShadow',
-            {
-                dx: offset[0],
-                dy: offset[1],
-                stdDeviation: blur,
-                'flood-color': fill,
-                'flood-opacity': opacity
-            }
-        ]
-    ]
-}
-
-interface SoftUiOpts {
-    id: string
-    offset: [number, number]
-    blur: number
-    opacity: number
-    fills: [string, string]
-}
-
-const softUiShadow = ({ id, offset, blur, fills, opacity }: SoftUiOpts) => {
-    return [
-        'filter',
-        { id },
-        [
-            'feDropShadow',
-            {
-                dx: offset[0],
-                dy: offset[1],
-                stdDeviation: blur,
-                'flood-color': fills[0],
-                'flood-opacity': opacity,
-                result: 'shadow-down',
-                in: 'SourceGraphic'
-            }
-        ],
-        [
-            'feDropShadow',
-            {
-                dx: -offset[0],
-                dy: -offset[1],
-                stdDeviation: blur,
-                'flood-color': fills[1],
-                'flood-opacity': opacity,
-                result: 'shadow-up',
-                in: 'SourceGraphic'
-            }
-        ],
-        [
-            'feMerge',
-            ['feMergeNode', { in: 'shadow-up' }],
-            ['feMergeNode', { in: 'shadow-down' }]
-        ]
-    ]
-}
-
 /**
  * Used to render nodes.
  *
@@ -118,17 +49,10 @@ export const renderNode = (cell: VNodeListCell) => {
             transform: `translate(${transform.position})`
         },
         ['title', info],
-        softUiShadow({
-            blur: 0,
-            fills: ['#000000', '#555555'],
-            id: `drop-${cell.id}`,
-            offset: [7, 7],
-            opacity: 0.5
-        }),
+
         [
             'rect',
             {
-                filter: `url(#drop-${cell.id})`,
                 id: `node-${cell.id}`,
                 width: nodeWidth,
                 height: nodeHeight,
