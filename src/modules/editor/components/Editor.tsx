@@ -13,10 +13,27 @@ import { full } from '../../core/styles/full'
 import { AppContext } from '../../core/types/AppContext'
 import { VNodeList } from '../classes/VNodeList'
 import { createNodeSpawner } from '../helpers/createNodeSpawner'
-import { EditorState } from '../types/EditorState'
-import { renderNode } from './node'
+import { EditorState, VNodeState } from '../types/EditorState'
+import { renderNode } from './Node'
+import { h } from 'preact'
+import { useReducer } from 'preact/hooks'
 
-export class Editor implements ILifecycle {
+export const Editor = () => {
+    const [state, _] = useReducer(a => a, {
+        nodes: {},
+        selectedNodes: new Set()
+    })
+
+    const nodes = Object.values(state.nodes) as VNodeState[]
+
+    return (
+        <svg style={full} fill="#222222">
+            {nodes.map(renderNode)}
+        </svg>
+    )
+}
+
+export class OEditor implements ILifecycle {
     /**
      * Atom holding state for the entire editor.
      */
@@ -40,6 +57,21 @@ export class Editor implements ILifecycle {
      */
     private get nodeArray() {
         return this.nodes.toArray()
+    }
+
+    /**
+     * Called by hdom on each render.
+     */
+    public render(c: AppContext) {
+        return svg(
+            {
+                style: {
+                    ...full,
+                    ...background('#222222', ColorMode.CSS)
+                }
+            },
+            ['g', ...this.nodeArray.map(node => renderNode(node.state.deref()))]
+        )
     }
 
     /**
@@ -180,20 +212,5 @@ export class Editor implements ILifecycle {
                 ctx.reactingTo.next(stream)
             }
         })
-    }
-
-    /**
-     * Called by hdom on each render.
-     */
-    public render(c: AppContext) {
-        return svg(
-            {
-                style: {
-                    ...full,
-                    ...background('#222222', ColorMode.CSS)
-                }
-            },
-            ['g', ...this.nodeArray.map(node => renderNode(node.state.deref()))]
-        )
     }
 }

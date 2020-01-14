@@ -2,7 +2,8 @@ import { divN2, sub2 } from '@thi.ng/vectors'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
-import { createPinRenderer } from './pin'
+import { createPinRenderer } from './Pin'
+import { h } from 'preact'
 
 /**
  * Used to render nodes.
@@ -50,57 +51,49 @@ export const renderNode = (state: VNodeState) => {
         ...pins.outputs.map(pin => bullet(pin.label))
     ].join('\n')
 
-    return [
-        'g',
-        {
-            class: 'unselectable',
-            transform: `translate(${transform.position})`
-        },
-        ['title', info],
-        [
-            'rect',
-            {
-                id: `node-${id}`,
-                width: nodeWidth,
-                height: nodeHeight,
-                fill: material.fill,
-                opacity: material.opacity,
-                stroke: material.stroke[selected ? 'active' : 'normal'],
-                'stroke-width': shape.strokeWidth,
-                rx: shape.borderRadius
-            }
-        ],
-        [
-            'text',
-            {
-                x: nodeWidth + 2 * shape.strokeWidth + label.size / 2,
-                y: nodeHeight / 2,
-                'font-size': label.size,
-                'dominant-baseline': 'middle',
-                'text-anchor': 'start',
-                style: {
-                    fill: label.fill
-                },
-                class: 'overpass'
-            },
-            label.text
-        ],
-        [
-            'g',
-            ...pins.inputs.flatMap(inputPinRenderer),
-            ...pins.outputs.flatMap(outputPinRenderer)
-        ],
-        [
-            'g',
-            {
-                id: `node-${id}`,
-                transform: `translate(${divN2(
+    return (
+        <g
+            key={id}
+            class="unselectable"
+            transform={`translate(${transform.position})`}
+        >
+            <title>{info}</title>
+            <rect
+                id={`node-${id}`}
+                width={nodeWidth}
+                height={nodeHeight}
+                fill={material.fill}
+                opacity={material.opacity}
+                stroke={material.stroke[selected ? 'active' : 'normal']}
+                strokeWidth={shape.strokeWidth}
+                rx={shape.borderRadius}
+            />
+
+            <text
+                x={nodeWidth + 2 * shape.strokeWidth + label.size / 2}
+                y={nodeHeight / 2}
+                fontSize={label.size}
+                dominantBaseline="middle"
+                textAnchor="start"
+                fill={label.fill}
+                class="overpass"
+            >
+                {label.text}
+            </text>
+
+            {...pins.inputs.flatMap(inputPinRenderer)}
+            {...pins.outputs.flatMap(outputPinRenderer)}
+
+            <g
+                id={`node-${id}`}
+                transform={`translate(${divN2(
                     null,
                     sub2([], scale, content.scale),
                     2
-                )})`
-            },
-            content.generate(state)
-        ]
-    ]
+                )})`}
+            >
+                {content.generate(state)}
+            </g>
+        </g>
+    )
 }

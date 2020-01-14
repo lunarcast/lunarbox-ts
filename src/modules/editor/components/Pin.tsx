@@ -1,6 +1,7 @@
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
 import { PinTemplate } from '../types/VNodeTemplate'
+import { h, Fragment } from 'preact'
 
 /**
  * Creates a render to for pins of a certain type following a few constraints.
@@ -12,7 +13,7 @@ import { PinTemplate } from '../types/VNodeTemplate'
 export const createPinRenderer = (
     nodeType: 1 | -1,
     scale: [number, number],
-    { transform, selected, template: { shape, pins, material } }: VNodeState
+    { selected, template: { shape, pins, material } }: VNodeState
 ) => {
     const total = (nodeType === 1 ? pins.inputs : pins.outputs).length
 
@@ -24,20 +25,13 @@ export const createPinRenderer = (
         const rawX =
             calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
         const x = rawX + xOffset
+        const fill = selected ? material.stroke.active : material.stroke.normal
 
-        return [
-            [
-                'circle',
-                {
-                    r: shape.pinRadius,
-                    cx: x,
-                    cy: y,
-                    fill: selected
-                        ? material.stroke.active
-                        : material.stroke.normal
-                },
-                ['title', pin.label]
-            ]
-        ]
+        return (
+            <Fragment>
+                <circle r={shape.pinRadius} cx={x} cy={y} fill={fill}></circle>
+                <title>{pin.label}</title>
+            </Fragment>
+        )
     }
 }

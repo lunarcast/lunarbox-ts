@@ -1,5 +1,5 @@
 import { AppContext } from '../types/AppContext'
-import { Editor } from '../../editor/components/editor'
+import { Editor } from '../../editor/components/Editor'
 
 const editor = new Editor()
 

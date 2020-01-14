@@ -1,4 +1,5 @@
 import { VNodeState } from './EditorState'
+import { JSX } from 'preact'
 
 export type PinTemplate = {
     label: string
@@ -26,7 +27,7 @@ export interface VNodeTemplate {
         pinRadius: number
     }
     content: {
-        generate: (v: VNodeState) => unknown
+        generate: (v: VNodeState) => JSX.Element
         scale: [number, number]
         margin: number
     }
