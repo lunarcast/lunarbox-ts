@@ -5,11 +5,12 @@
         "baseUrl": ".",
         "lib": ["ESNext.Array", "DOM"],
         "module": "ESNext",
-        "esModuleInterop": true,
         "moduleResolution": "node",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
         "strictNullChecks": true,
-        "outDir": "dist",
-        "allowSyntheticDefaultImports": true
+        "jsx": "react",
+        "jsxFactory": "h"
     },
     "include": ["src"]
 }
