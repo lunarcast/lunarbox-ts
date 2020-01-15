@@ -18,6 +18,7 @@ import { getNodesArray } from '../lenses/nodesArray'
 import { unselectNodes } from '../helpers/unselectNodes'
 import { EditorState } from '../types/EditorState'
 import { renderNode } from './Node'
+import { selectNode } from '../helpers/selectNode'
 
 export const Editor = () => {
     const { promap, setState, state } = useProfunctorState<EditorState>({
@@ -32,7 +33,6 @@ export const Editor = () => {
     }, [])
 
     const { state: nodes } = promap(getNodesArray, identitySetter)
-
     const [_, setDelta] = pipe([0, 0], Option.some, useState)
 
     const handleMouseUp = () => {
@@ -59,7 +59,8 @@ export const Editor = () => {
         )
 
         // this modifies the state of the app
-        const update = (id: number) => flow(liftNode(id), unselectNodes)
+        const update = (id: number) =>
+            flow(liftNode(id), unselectNodes, selectNode(id))
 
         // this commits the state
         return pipe(id, Option.map(flow(update, setState)))
