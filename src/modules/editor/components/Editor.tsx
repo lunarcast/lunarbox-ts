@@ -15,7 +15,7 @@ import { spawnNode } from '../helpers/spawnNode'
 import { startsWith } from '../helpers/startsWith'
 import { liftNode } from '../lenses/liftNode'
 import { getNodesArray } from '../lenses/nodesArray'
-import { unselectNodes } from '../lenses/unselectNodes'
+import { unselectNodes } from '../helpers/unselectNodes'
 import { EditorState } from '../types/EditorState'
 import { renderNode } from './Node'
 
