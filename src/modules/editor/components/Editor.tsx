@@ -1,5 +1,4 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
-import { Nullable } from '@thi.ng/api'
 import { add2, sub2 } from '@thi.ng/vectors'
 import * as Array from 'fp-ts/es6/Array'
 import { flow } from 'fp-ts/es6/function'
@@ -57,7 +56,7 @@ export const Editor = () => {
 
         // Id of the node clicked
         const id = pipe(
-            target as Nullable<HTMLElement>,
+            target as HTMLElement | null,
             Option.fromNullable,
             resolveEventTarget(predicate),
             Option.map(flow(getElementId, withoutPrefix, Number))

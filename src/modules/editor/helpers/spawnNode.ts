@@ -1,10 +1,9 @@
-import { Cursor } from '@thi.ng/atom'
 import merge from 'deepmerge'
+import { State } from 'fp-ts/es6/State'
 import { DeepPartial } from 'utility-types'
 import { defaultVNodeTemplate } from '../constants'
-import { VNodeState, EditorState } from '../types/EditorState'
+import { EditorState, VNodeState } from '../types/EditorState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
-import { State } from 'fp-ts/es6/State'
 import { generateZIndex } from './generateZIndex'
 
 /**
