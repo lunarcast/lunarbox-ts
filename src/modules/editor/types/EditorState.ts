@@ -1,5 +1,6 @@
 import { VNodeTemplate } from './VNodeTemplate'
 import { lens } from 'lens.ts'
+import { contramap, ordNumber } from 'fp-ts/es6/Ord'
 
 /**
  * State used to render nodes.
@@ -19,6 +20,13 @@ export interface VNodeState {
  * Lens for node states.
  */
 export const VNodeState = lens<VNodeState>()
+
+/**
+ * Used to sort nodes.
+ */
+export const vNodeOrd = contramap((node: VNodeState) => node.transform.zIndex)(
+    ordNumber
+)
 
 /**
  * State for the editor componentCHR

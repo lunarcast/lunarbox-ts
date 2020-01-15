@@ -1,5 +1,7 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { Nullable } from '@thi.ng/api'
+import { add2, sub2 } from '@thi.ng/vectors'
+import * as Array from 'fp-ts/es6/Array'
 import { flow } from 'fp-ts/es6/function'
 import * as IO from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
@@ -11,14 +13,14 @@ import { getElementId } from '../../core/lenses/html'
 import { full } from '../../core/styles/full'
 import { identitySetter } from '../../lens/helpers/identitySetter'
 import { resolveEventTarget } from '../helpers/resolveEventTarget'
+import { selectNode } from '../helpers/selectNode'
 import { spawnNode } from '../helpers/spawnNode'
 import { startsWith } from '../helpers/startsWith'
-import { liftNode } from '../lenses/liftNode'
-import { getNodesArray } from '../lenses/nodesArray'
 import { unselectNodes } from '../helpers/unselectNodes'
-import { EditorState } from '../types/EditorState'
+import { liftNode } from '../lenses/liftNode'
+import { getNodesArray, setSelectedNodes } from '../lenses/nodesArray'
+import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
 import { renderNode } from './Node'
-import { selectNode } from '../helpers/selectNode'
 
 export const Editor = () => {
     const { promap, setState, state } = useProfunctorState<EditorState>({
@@ -27,16 +29,19 @@ export const Editor = () => {
     })
 
     useEffect(() => {
-        const [_, newState] = spawnNode()(state)
+        const [, newState] = spawnNode()(state)
+        const [, finalState] = spawnNode()(newState)
 
-        pipe(newState, IO.of, setState)
+        pipe(finalState, IO.of, setState) //
     }, [])
 
     const { state: nodes } = promap(getNodesArray, identitySetter)
-    const [_, setDelta] = pipe([0, 0], Option.some, useState)
+    const [lastMousePosition, setLastMousePosition] = useState<
+        Option.Option<number[]>
+    >(Option.none)
 
     const handleMouseUp = () => {
-        setDelta(Option.none)
+        setLastMousePosition(Option.none)
         setState(unselectNodes)
     }
 
@@ -66,53 +71,43 @@ export const Editor = () => {
         return pipe(id, Option.map(flow(update, setState)))
     }
 
+    const handleMouseMove = ({ clientX, clientY, buttons }: MouseEvent) => {
+        const currentPosition = [clientX, clientY]
+
+        if (!(buttons & MouseButtons.left)) {
+            return
+        }
+
+        pipe(
+            lastMousePosition,
+            Option.map(position => {
+                const delta = sub2([], currentPosition, position) as number[]
+
+                return pipe(
+                    state,
+                    setSelectedNodes(
+                        VNodeState.transform.position.set(
+                            old => add2([], delta, old) as number[]
+                        )
+                    )
+                )
+            }),
+            Option.map(flow(IO.of, setState))
+        )
+
+        pipe(currentPosition, Option.some, setLastMousePosition)
+    }
+
+    const children = pipe(nodes, Array.sort(vNodeOrd), Array.map(renderNode))
+
     return (
         <svg
             style={{ ...full, background: '#222222' }}
             onMouseUp={handleMouseUp}
             onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
         >
-            {nodes.map(renderNode)}
+            {children}
         </svg>
     )
 }
-
-//                         // select the thing the user clicked on
-//                         if (node.state.deref().id === id) {
-//                             node.state.resetIn('selected', true)
-//                         }
-//                     }
-//                 }
-//             })
-
-//         drags
-//             .transform(
-//                 tx.comp(
-//                     tx.map(e => [e.clientX, e.clientY] as const), // only keep what we need
-//                     tx.dedupe() // remove duplicates
-//                 )
-//             )
-//             .subscribe({
-//                 next: position => {
-//                     // We need this because we are not sure
-//                     // we have a previous delta to go of
-//                     Option.map((oldDelta: ReadonlyArray<number>) => {
-//                         // The amount the mouse moved since the last update
-//                         const diff = sub2([], position, oldDelta)
-
-//                         // move the nodes which are selected
-//                         for (const node of this.selectedNodes) {
-//                             node.state.swapIn(
-//                                 'transform.position',
-//                                 (input: number[]) => {
-//                                     // move the input by the mouse difference
-//                                     return add2([], diff, input)
-//                                 }
-//                             )
-//                         }
-//                     })(delta.deref())
-
-//                     // save current delta
-//                     delta.reset(Option.some(position))
-//                 }
-//             })
