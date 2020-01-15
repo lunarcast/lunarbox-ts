@@ -28,7 +28,12 @@ module.exports = {
     },
     devtool: dev ? 'inline-source-map' : 'source-map',
     resolve: {
-        extensions: ['.ts', '.js', '.tsx']
+        extensions: ['.ts', '.js', '.tsx'],
+        alias: {
+            react: 'preact/compat',
+            'react-dom/test-utils': 'preact/test-utils',
+            'react-dom': 'preact/compat'
+        }
     },
     module: {
         rules: [

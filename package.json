@@ -26,6 +26,7 @@
     },
     "dependencies": {
         "@babel/runtime": "^7.8.3",
+        "@staltz/use-profunctor-state": "^1.3.0",
         "@thi.ng/api": "^6.6.0",
         "@thi.ng/atom": "^3.1.2",
         "@thi.ng/color": "^1.1.3",
@@ -39,6 +40,7 @@
         "@thi.ng/vectors": "^4.0.1",
         "deepmerge": "^4.2.2",
         "fp-ts": "^2.3.1",
+        "lens.ts": "^0.5.1",
         "preact": "^10.2.1"
     },
     "license": "GPL-3.0"

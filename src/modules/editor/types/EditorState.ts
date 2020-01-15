@@ -1,4 +1,5 @@
 import { VNodeTemplate } from './VNodeTemplate'
+import { lens } from 'lens.ts'
 
 /**
  * State used to render nodes.
@@ -7,6 +8,7 @@ export interface VNodeState {
     transform: {
         position: number[]
         scale: number[]
+        zIndex: number
     }
     template: VNodeTemplate
     selected: boolean
@@ -14,9 +16,19 @@ export interface VNodeState {
 }
 
 /**
+ * Lens for node states.
+ */
+export const VNodeState = lens<VNodeState>()
+
+/**
  * State for the editor componentCHR
  */
 export interface EditorState {
-    selectedNodes: Set<number>
+    laseZIndex: number
     nodes: Record<number, VNodeState>
 }
+
+/**
+ * Lens for editor states.
+ */
+export const EditorState = lens<EditorState>()

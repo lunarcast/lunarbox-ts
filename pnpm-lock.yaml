@@ -1,5 +1,6 @@
 dependencies:
   '@babel/runtime': 7.8.3
+  '@staltz/use-profunctor-state': 1.3.0
   '@thi.ng/api': 6.6.0
   '@thi.ng/atom': 3.1.2
   '@thi.ng/color': 1.1.3
@@ -13,6 +14,7 @@ dependencies:
   '@thi.ng/vectors': 4.0.1
   deepmerge: 4.2.2
   fp-ts: 2.3.1
+  lens.ts: 0.5.1
   preact: 10.2.1
 devDependencies:
   '@babel/core': 7.8.3
@@ -924,6 +926,13 @@ packages:
     dev: true
     resolution:
       integrity: sha512-jBD+G8+LWpMBBWvVcdr4QysjUE4mU/syrhN17o1u3gx0/WzJB1kwiVZAXRtWbsIPOwW8pF/YJV5+nmetPzepXg==
+  /@staltz/use-profunctor-state/1.3.0:
+    dev: false
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    resolution:
+      integrity: sha512-TlrH4dGdTtW5hw30fTjNpISES2wW+26iC8Usl6VSLcbIpfPEHNq9Fn6I1V6cHLKUy6GYh5SBgh7YzFm0y9TKNA==
   /@thi.ng/api/6.6.0:
     dev: false
     resolution:
@@ -3855,6 +3864,10 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-avPEb8P8EGnwXKClwsNUgryVjllcRqtMYa49NTsbQagYuT1DcXnl1915oxWjoyGrXR6zH/Y0Zc96xWsPcoDKeA==
+  /lens.ts/0.5.1:
+    dev: false
+    resolution:
+      integrity: sha1-lXzYGDjqc1mwwoDyT5R4vG6Suvw=
   /leven/3.1.0:
     dev: true
     engines:
@@ -6259,6 +6272,7 @@ specifiers:
   '@babel/preset-env': ^7.8.3
   '@babel/preset-typescript': ^7.8.3
   '@babel/runtime': ^7.8.3
+  '@staltz/use-profunctor-state': ^1.3.0
   '@thi.ng/api': ^6.6.0
   '@thi.ng/atom': ^3.1.2
   '@thi.ng/color': ^1.1.3
@@ -6278,6 +6292,7 @@ specifiers:
   deepmerge: ^4.2.2
   fp-ts: ^2.3.1
   html-webpack-plugin: ^3.2.0
+  lens.ts: ^0.5.1
   preact: ^10.2.1
   source-map-loader: ^0.2.4
   typescript: ^3.7.4

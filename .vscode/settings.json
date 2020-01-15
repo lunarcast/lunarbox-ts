@@ -9,10 +9,16 @@
         "mapcat",
         "pipeable",
         "preact",
+        "profunctor",
+        "promap",
         "pubsub",
         "rstream",
         "stateful",
-        "unselectable"
+        "unselectable",
+        "xstate"
     ],
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "cSpell.ignoreWords": [
+        "staltz"
+    ]
 }
