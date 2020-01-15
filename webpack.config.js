@@ -7,15 +7,25 @@ const dev = mode === 'development'
 const sourceDir = resolve(__dirname, 'src')
 const outputDir = resolve(__dirname, 'dist')
 
-const entry = resolve(sourceDir, 'index.ts')
+const entry = resolve(sourceDir, 'index.tsx')
 const htmlTemplate = resolve(sourceDir, 'index.html')
 
 const babelConfig = {
-    presets: ['@babel/preset-env', 'preact', '@babel/preset-typescript'],
+    presets: [
+        '@babel/preset-env',
+        ['@babel/preset-typescript', { jsxPragma: 'h' }]
+    ],
     plugins: [
         '@babel/proposal-class-properties',
         '@babel/proposal-object-rest-spread',
-        '@babel/plugin-transform-runtime'
+        '@babel/plugin-transform-runtime',
+        [
+            '@babel/plugin-transform-react-jsx',
+            {
+                pragma: 'h',
+                pragmaFrag: 'Fragment'
+            }
+        ]
     ]
 }
 
@@ -26,9 +36,9 @@ module.exports = {
         path: outputDir,
         filename: 'bundle.js'
     },
-    devtool: dev ? 'inline-source-map' : 'source-map',
+    devtool: 'inline-source-map',
     resolve: {
-        extensions: ['.ts', '.js', '.tsx'],
+        extensions: ['.ts', '.js', '.tsx', '.jsx'],
         alias: {
             react: 'preact/compat',
             'react-dom/test-utils': 'preact/test-utils',

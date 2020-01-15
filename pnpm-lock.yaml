@@ -20,13 +20,13 @@ devDependencies:
   '@babel/core': 7.8.3
   '@babel/plugin-proposal-class-properties': 7.8.3_@babel+core@7.8.3
   '@babel/plugin-proposal-object-rest-spread': 7.8.3_@babel+core@7.8.3
+  '@babel/plugin-transform-react-jsx': 7.8.3_@babel+core@7.8.3
   '@babel/plugin-transform-runtime': 7.8.3_@babel+core@7.8.3
   '@babel/preset-env': 7.8.3_@babel+core@7.8.3
   '@babel/preset-typescript': 7.8.3_@babel+core@7.8.3
   '@types/node': 13.1.4
   all-contributors-cli: 6.12.0
   babel-loader: 8.0.6_@babel+core@7.8.3+webpack@4.41.5
-  babel-preset-preact: 2.0.0_@babel+core@7.8.3
   cross-env: 6.0.3
   html-webpack-plugin: 3.2.0_webpack@4.41.5
   source-map-loader: 0.2.4
@@ -1588,14 +1588,6 @@ packages:
     dev: true
     resolution:
       integrity: sha512-o6qFkpeQEBxcqt0XYlWzAVxNCSCZdUgcR8IRlhD/8DylxjjO4foPcvTW0GGKa/cVt3rvxZ7o5ippJ+/0nvLhlQ==
-  /babel-preset-preact/2.0.0_@babel+core@7.8.3:
-    dependencies:
-      '@babel/plugin-transform-react-jsx': 7.8.3_@babel+core@7.8.3
-    dev: true
-    peerDependencies:
-      '@babel/core': '*'
-    resolution:
-      integrity: sha512-gqJCALE4XXEienLkzgAQ351XyoVHTIiZRAKjEJupK7cTVhFyovEuSrVoNrTNrUu3R78vAarjxkrR6j0vr+Rg8Q==
   /balanced-match/1.0.0:
     dev: true
     resolution:
@@ -6268,6 +6260,7 @@ specifiers:
   '@babel/core': ^7.8.3
   '@babel/plugin-proposal-class-properties': ^7.8.3
   '@babel/plugin-proposal-object-rest-spread': ^7.8.3
+  '@babel/plugin-transform-react-jsx': ^7.8.3
   '@babel/plugin-transform-runtime': ^7.8.3
   '@babel/preset-env': ^7.8.3
   '@babel/preset-typescript': ^7.8.3
@@ -6287,7 +6280,6 @@ specifiers:
   '@types/node': ^13.1.4
   all-contributors-cli: ^6.12.0
   babel-loader: ^8.0.6
-  babel-preset-preact: ^2.0.0
   cross-env: ^6.0.3
   deepmerge: ^4.2.2
   fp-ts: ^2.3.1
