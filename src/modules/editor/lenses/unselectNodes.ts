@@ -13,5 +13,6 @@ export const unselectNode = VNodeState.selected.set(false)
 export const unselectNodes = pipe(
     unselectNode,
     Record.map,
-    EditorState.nodes.set
+    // this needs to have access to this so I need to do it this way.
+    f => EditorState.nodes.set(f)
 )

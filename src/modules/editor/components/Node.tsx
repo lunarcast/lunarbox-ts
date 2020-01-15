@@ -81,8 +81,8 @@ export const renderNode = (state: VNodeState) => {
                 {label.text}
             </text>
 
-            {...pins.inputs.flatMap(inputPinRenderer)}
-            {...pins.outputs.flatMap(outputPinRenderer)}
+            {pins.inputs.flatMap(inputPinRenderer)}
+            {pins.outputs.flatMap(outputPinRenderer)}
 
             <g
                 id={`node-${id}`}

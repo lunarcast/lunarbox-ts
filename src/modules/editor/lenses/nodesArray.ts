@@ -1,4 +1,4 @@
-import Array from 'fp-ts/es6/Array'
+import * as Array from 'fp-ts/es6/Array'
 import { flow } from 'fp-ts/es6/function'
 import { EditorState, VNodeState } from '../types/EditorState'
 import { isSelected } from './isSelected'

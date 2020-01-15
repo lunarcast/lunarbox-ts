@@ -1,15 +1,17 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { Nullable } from '@thi.ng/api'
 import { flow } from 'fp-ts/es6/function'
+import * as IO from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { h } from 'preact'
-import { useState } from 'preact/hooks'
+import { useEffect, useState } from 'preact/hooks'
 import { MouseButtons } from '../../core/constants'
 import { getElementId } from '../../core/lenses/html'
 import { full } from '../../core/styles/full'
 import { identitySetter } from '../../lens/helpers/identitySetter'
 import { resolveEventTarget } from '../helpers/resolveEventTarget'
+import { spawnNode } from '../helpers/spawnNode'
 import { startsWith } from '../helpers/startsWith'
 import { liftNode } from '../lenses/liftNode'
 import { getNodesArray } from '../lenses/nodesArray'
@@ -23,9 +25,15 @@ export const Editor = () => {
         nodes: {}
     })
 
+    useEffect(() => {
+        const [_, newState] = spawnNode()(state)
+
+        pipe(newState, IO.of, setState)
+    }, [])
+
     const { state: nodes } = promap(getNodesArray, identitySetter)
 
-    const [delta, setDelta] = pipe([0, 0], Option.some, useState)
+    const [_, setDelta] = pipe([0, 0], Option.some, useState)
 
     const handleMouseUp = () => {
         setDelta(Option.none)
@@ -59,8 +67,7 @@ export const Editor = () => {
 
     return (
         <svg
-            style={full}
-            fill="#222222"
+            style={{ ...full, background: '#222222' }}
             onMouseUp={handleMouseUp}
             onMouseDown={handleMouseDown}
         >
