@@ -23,7 +23,7 @@ import { unselectNodes } from '../helpers/unselectNodes'
 import { liftNode } from '../lenses/liftNode'
 import { setSelectedNodes } from '../lenses/nodesArray'
 import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
-import { renderNode } from './Node'
+import { Node } from './Node'
 import { useEffectufulCallback } from '../../fp/helpers/useEffectufulCallback'
 import { option } from 'fp-ts/es6/Option'
 
@@ -138,7 +138,7 @@ export const Editor = () => {
         state.nodes,
         Record.collect(flow(tuple, snd)),
         Array.sort(vNodeOrd),
-        Array.map(renderNode)
+        Array.map(node => <Node {...node} key={node.id} />)
     )
 
     return (

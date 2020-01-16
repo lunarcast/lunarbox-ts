@@ -10,7 +10,7 @@ import { h } from 'preact'
  *
  * @param current The current state of the node.
  */
-export const renderNode = (state: VNodeState) => {
+export const Node = (state: VNodeState) => {
     const {
         template: { label, material, shape, pins, content },
         selected,
@@ -52,11 +52,7 @@ export const renderNode = (state: VNodeState) => {
     ].join('\n')
 
     return (
-        <g
-            key={id}
-            class="unselectable"
-            transform={`translate(${transform.position})`}
-        >
+        <g class="unselectable" transform={`translate(${transform.position})`}>
             <title>{info}</title>
             <rect
                 id={`node-${id}`}
