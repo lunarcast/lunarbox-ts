@@ -14,6 +14,7 @@
         "promap",
         "pubsub",
         "rstream",
+        "semigroup",
         "stateful",
         "unselectable",
         "xstate"
@@ -21,5 +22,6 @@
     "editor.formatOnSave": true,
     "cSpell.ignoreWords": [
         "staltz"
-    ]
+    ],
+    "typescript.tsdk": "node_modules/typescript/lib"
 }
