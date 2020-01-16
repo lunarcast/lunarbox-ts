@@ -1,10 +1,12 @@
 {
     "cSpell.words": [
+        "callback",
         "contramap",
         "dedupe",
         "deepmerge",
         "deref",
         "devtool",
+        "effectuful",
         "hdom",
         "lifecycle",
         "mapcat",
@@ -17,6 +19,7 @@
         "semigroup",
         "stateful",
         "unselectable",
+        "use",
         "xstate"
     ],
     "editor.formatOnSave": true,

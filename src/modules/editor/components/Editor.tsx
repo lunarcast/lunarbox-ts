@@ -2,7 +2,7 @@ import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { add2, sub2 } from '@thi.ng/vectors'
 import * as Array from 'fp-ts/es6/Array'
 import { array } from 'fp-ts/es6/Array'
-import { constant, flow, tuple } from 'fp-ts/es6/function'
+import { constant, flow, tuple, constVoid } from 'fp-ts/es6/function'
 import { IO, io } from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
@@ -24,6 +24,8 @@ import { liftNode } from '../lenses/liftNode'
 import { setSelectedNodes } from '../lenses/nodesArray'
 import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
 import { renderNode } from './Node'
+import { useEffectufulCallback } from '../../fp/helpers/useEffectufulCallback'
+import { option } from 'fp-ts/es6/Option'
 
 export const Editor = () => {
     const { state, setState } = useProfunctorState<EditorState>({
@@ -51,58 +53,60 @@ export const Editor = () => {
         Option.Option<number[]>
     >(Option.none)
 
-    const handleMouseUp = () => {
-        const sideEffect = pipe(
-            [
-                () => setState(unselectNodes),
-                () => setLastMousePosition(Option.none)
-            ],
-            array.sequence(io)
-        )
+    const handleMouseUp = pipe(
+        [
+            () => setState(unselectNodes),
+            () => setLastMousePosition(Option.none)
+        ],
+        array.sequence(io)
+    )
 
-        sideEffect()
-    }
+    const handleMouseDown = useEffectufulCallback(
+        ({ target, buttons }: MouseEvent) => {
+            if (!(buttons & MouseButtons.left)) {
+                return constVoid
+            }
 
-    const handleMouseDown = ({ target, buttons }: MouseEvent) => {
-        if (!(buttons & MouseButtons.left)) {
-            return
+            // prefix related stuff
+            const prefix = 'node-'
+            const predicate = flow(getElementId, startsWith(prefix))
+            const withoutPrefix = (s: string) => s.substr(prefix.length)
+
+            // Id of the node clicked
+            return pipe(
+                target,
+                Option.fromNullable,
+                resolveEventTarget(predicate),
+                Option.map(element => {
+                    const id = pipe(
+                        element,
+                        getElementId,
+                        withoutPrefix,
+                        Number
+                    )
+
+                    const stateUpdater = flow(
+                        liftNode(id),
+                        unselectNodes,
+                        selectNode(id)
+                    )
+
+                    return () => setState(stateUpdater)
+                }),
+                option.sequence(io)
+            )
         }
+    )
 
-        // prefix related stuff
-        const prefix = 'node-'
-        const predicate = flow(getElementId, startsWith(prefix))
-        const withoutPrefix = (s: string) => s.substr(prefix.length)
+    const handleMouseMove = useEffectufulCallback(
+        ({ clientX, clientY, buttons }: MouseEvent) => {
+            if (!(buttons & MouseButtons.left)) {
+                return constVoid
+            }
 
-        // Id of the node clicked
-        const id = pipe(
-            target,
-            Option.fromNullable,
-            resolveEventTarget(predicate),
-            Option.map(element => {
-                const id = pipe(element, getElementId, withoutPrefix, Number)
+            const currentPosition = [clientX, clientY]
 
-                const stateUpdater = flow(
-                    liftNode(id),
-                    unselectNodes,
-                    selectNode(id)
-                )
-
-                const sideEffect: IO<void> = () => setState(stateUpdater)
-
-                sideEffect()
-            })
-        )
-    }
-
-    const handleMouseMove = ({ clientX, clientY, buttons }: MouseEvent) => {
-        if (!(buttons & MouseButtons.left)) {
-            return
-        }
-
-        const currentPosition = [clientX, clientY]
-
-        const moveIO: IO<void> = () =>
-            pipe(
+            const moveIO: IO<void> = pipe(
                 lastMousePosition,
                 Option.map(position => {
                     const delta = sub2(
@@ -111,23 +115,24 @@ export const Editor = () => {
                         position
                     ) as number[]
 
-                    return setState(
-                        setSelectedNodes(
-                            VNodeState.transform.position.set(
-                                old => add2([], delta, old) as number[]
+                    return () =>
+                        setState(
+                            setSelectedNodes(
+                                VNodeState.transform.position.set(
+                                    old => add2([], delta, old) as number[]
+                                )
                             )
                         )
-                    )
-                })
+                }),
+                option.sequence(io)
             )
 
-        const currentPositionUpdater: IO<void> = () =>
-            pipe(currentPosition, Option.some, setLastMousePosition)
+            const currentPositionUpdater: IO<void> = () =>
+                pipe(currentPosition, Option.some, setLastMousePosition)
 
-        const sideEffect = array.sequence(io)([currentPositionUpdater, moveIO])
-
-        sideEffect()
-    }
+            return array.sequence(io)([currentPositionUpdater, moveIO])
+        }
+    )
 
     const children = pipe(
         state.nodes,
