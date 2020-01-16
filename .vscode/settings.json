@@ -1,6 +1,7 @@
 {
     "cSpell.words": [
         "callback",
+        "contibuting",
         "contramap",
         "dedupe",
         "deepmerge",
@@ -8,7 +9,9 @@
         "devtool",
         "effectuful",
         "hdom",
+        "infoeducatie",
         "lifecycle",
+        "lunarbox",
         "mapcat",
         "pipeable",
         "preact",
@@ -24,6 +27,10 @@
     ],
     "editor.formatOnSave": true,
     "cSpell.ignoreWords": [
+        "adriel",
+        "markdownlint",
+        "matei",
+        "mateiadrielrafael",
         "staltz"
     ],
     "typescript.tsdk": "node_modules/typescript/lib"

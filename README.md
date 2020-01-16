@@ -1,17 +1,20 @@
 # Lunarbox
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 Visual functional programming tool I want to finish until infoeducatie
 
 ## Stack
 
-typescript + thi.ng/umbrella + fp-ts
+fp-ts + preact + thi.ng/umbrella
 
 ## Contibuting
 
-Fork + code + Open a pr
+Fork + code + Open a pull request
 
 ## Contributors ✨
 
@@ -28,6 +31,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
