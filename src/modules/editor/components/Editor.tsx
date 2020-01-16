@@ -1,7 +1,7 @@
 import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { add2, sub2 } from '@thi.ng/vectors'
 import * as Array from 'fp-ts/es6/Array'
-import { flow } from 'fp-ts/es6/function'
+import { flow, constant } from 'fp-ts/es6/function'
 import * as IO from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
@@ -20,18 +20,30 @@ import { liftNode } from '../lenses/liftNode'
 import { getNodesArray, setSelectedNodes } from '../lenses/nodesArray'
 import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
 import { renderNode } from './Node'
+import { snd } from 'fp-ts/es6/Tuple'
+import * as State from 'fp-ts/es6/State'
+import * as Reader from 'fp-ts/es6/Reader'
 
 export const Editor = () => {
-    const { promap, setState, state } = useProfunctorState<EditorState>({
+    const { promap, setState, state: editorState } = useProfunctorState<
+        EditorState
+    >({
         laseZIndex: -1,
         nodes: {}
     })
 
     useEffect(() => {
-        const [, newState] = spawnNode()(state)
-        const [, finalState] = spawnNode()(newState)
+        const spawner = constant(spawnNode())
 
-        pipe(finalState, IO.of, setState) //
+        const spawn = flow(
+            spawner,
+            State.chain(spawner),
+            Reader.chain(flow(snd, constant))
+        )
+
+        const sideEffect: IO.IO<void> = flow(spawn, setState)
+
+        sideEffect()
     }, [])
 
     const { state: nodes } = promap(getNodesArray, identitySetter)
@@ -82,16 +94,13 @@ export const Editor = () => {
             Option.map(position => {
                 const delta = sub2([], currentPosition, position) as number[]
 
-                return pipe(
-                    state,
-                    setSelectedNodes(
-                        VNodeState.transform.position.set(
-                            old => add2([], delta, old) as number[]
-                        )
+                return setSelectedNodes(
+                    VNodeState.transform.position.set(
+                        old => add2([], delta, old) as number[]
                     )
                 )
             }),
-            Option.map(flow(IO.of, setState))
+            Option.map(setState)
         )
 
         pipe(currentPosition, Option.some, setLastMousePosition)
