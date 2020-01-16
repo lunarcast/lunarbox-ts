@@ -2,19 +2,22 @@ import { useProfunctorState } from '@staltz/use-profunctor-state'
 import { add2, sub2 } from '@thi.ng/vectors'
 import * as Array from 'fp-ts/es6/Array'
 import { array } from 'fp-ts/es6/Array'
-import { constant, flow, tuple, constVoid } from 'fp-ts/es6/function'
+import { constant, constVoid, flow, tuple } from 'fp-ts/es6/function'
 import { IO, io } from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
+import { option } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import * as Reader from 'fp-ts/es6/Reader'
 import * as Record from 'fp-ts/es6/Record'
 import * as State from 'fp-ts/es6/State'
 import { snd } from 'fp-ts/es6/Tuple'
 import { h } from 'preact'
-import { useEffect, useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { MouseButtons } from '../../core/constants'
 import { getElementId } from '../../core/lenses/html'
 import { full } from '../../core/styles/full'
+import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
+import { useIo } from '../../fp/hooks/useIO'
 import { resolveEventTarget } from '../helpers/resolveEventTarget'
 import { selectNode } from '../helpers/selectNode'
 import { spawnNode } from '../helpers/spawnNode'
@@ -24,8 +27,6 @@ import { liftNode } from '../lenses/liftNode'
 import { setSelectedNodes } from '../lenses/nodesArray'
 import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
 import { Node } from './Node'
-import { useEffectufulCallback } from '../../fp/helpers/useEffectufulCallback'
-import { option } from 'fp-ts/es6/Option'
 
 export const Editor = () => {
     const { state, setState } = useProfunctorState<EditorState>({
@@ -35,7 +36,7 @@ export const Editor = () => {
 
     // At the start of the program we spawn 2 nodes for testing
     // TODO remove
-    useEffect(() => {
+    useIo(() => {
         const spawner = constant(spawnNode())
 
         const spawn = flow(
@@ -44,9 +45,7 @@ export const Editor = () => {
             Reader.chain(flow(snd, constant))
         )
 
-        const sideEffect: IO<void> = flow(spawn, setState)
-
-        sideEffect()
+        return flow(spawn, setState)
     }, [])
 
     const [lastMousePosition, setLastMousePosition] = useState<
