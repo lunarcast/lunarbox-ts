@@ -62,3 +62,8 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         ]
     }
 }
+
+export enum nodeTypes {
+    input,
+    output
+}

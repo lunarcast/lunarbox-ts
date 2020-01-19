@@ -1,7 +1,36 @@
+import { Fragment, h } from 'preact'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
-import { PinTemplate } from '../types/VNodeTemplate'
-import { h, Fragment } from 'preact'
+import { PinTemplate, VNodeTemplate } from '../types/VNodeTemplate'
+import { nodeTypes } from '../constants'
+
+/**
+ * Get the position of any pin
+ *
+ * @param index The index of the pin.
+ * @param nodeType The type of the pin.
+ * @param scale The scale of the node.
+ * @param template The template to use for the node
+ */
+export const calculatePinPosition = (
+    index: number,
+    nodeType: nodeTypes,
+    scale: [number, number],
+    { shape, pins }: VNodeTemplate
+) => {
+    const total = (nodeType === nodeTypes.input ? pins.inputs : pins.outputs)
+        .length
+
+    const xOffset =
+        (scale[0] - calculateTotalPinWidth(total, shape.pinRadius)) / 2
+    const rawX =
+        calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
+    const x = rawX + xOffset
+
+    const y = nodeType === nodeTypes.input ? 0 : scale[1]
+
+    return [x, y] as const
+}
 
 /**
  * Creates a render to for pins of a certain type following a few constraints.
@@ -11,21 +40,19 @@ import { h, Fragment } from 'preact'
  * @param state The state of the node to render the pins for.
  */
 export const createPinRenderer = (
-    nodeType: 1 | -1,
-    scale: [number, number],
-    { selected, template: { shape, pins, material } }: VNodeState
+    nodeType: nodeTypes,
+    { template, selected, transform }: VNodeState
 ) => {
-    const total = (nodeType === 1 ? pins.inputs : pins.outputs).length
-
-    const xOffset =
-        (scale[0] - calculateTotalPinWidth(total, shape.pinRadius)) / 2
-    const y = nodeType === 1 ? 0 : scale[1]
+    const { shape, material } = template
 
     return (pin: PinTemplate, index: number) => {
-        const rawX =
-            calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
-        const x = rawX + xOffset
         const fill = selected ? material.stroke.active : material.stroke.normal
+        const [x, y] = calculatePinPosition(
+            index,
+            nodeType,
+            transform.scale,
+            template
+        )
 
         return (
             <Fragment>

@@ -1,41 +1,13 @@
-import { divN2, sub2, add2 } from '@thi.ng/vectors'
-import { bullet } from '../helpers/bullet'
-import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
-import { VNodeState } from '../types/EditorState'
-import { createPinRenderer } from './Pin'
+import { add2, divN2, sub2 } from '@thi.ng/vectors'
 import { h } from 'preact'
+import { bullet } from '../helpers/bullet'
+import { VNodeState } from '../types/EditorState'
+import { VNodeTemplate } from '../types/VNodeTemplate'
+import { createPinRenderer } from './Pin'
+import { nodeTypes } from '../constants'
 
-/**
- * Used to render nodes.
- *
- * @param current The current state of the node.
- */
-export const Node = (state: VNodeState) => {
-    const {
-        template: { label, material, shape, pins, content },
-        selected,
-        transform,
-        id
-    } = state
-
-    const totalPinsWidth = calculateTotalPinWidth(
-        Math.max(pins.inputs.length, pins.outputs.length),
-        shape.pinRadius
-    )
-
-    const nodeWidth = Math.max(
-        2 * shape.strokeWidth + totalPinsWidth,
-        content.scale[0] + 2 * content.margin
-    )
-
-    const nodeHeight = content.scale[1] + 2 * (content.margin + shape.pinRadius)
-
-    const scale = [nodeWidth, nodeHeight] as [number, number]
-
-    const inputPinRenderer = createPinRenderer(1, scale, state)
-    const outputPinRenderer = createPinRenderer(-1, scale, state)
-
-    const info = [
+const getNodeInfo = ({ label, pins }: VNodeTemplate) =>
+    [
         `Name: ${label.text}`,
         '',
         `Description: ${label.description}`,
@@ -47,13 +19,29 @@ export const Node = (state: VNodeState) => {
         ...pins.outputs.map(pin => bullet(pin.label))
     ].join('\n')
 
+/**
+ * Used to render nodes.
+ *
+ * @param current The current state of the node.
+ */
+export const Node = (state: VNodeState) => {
+    const {
+        template: { label, material, shape, pins, content },
+        selected,
+        transform: { position, scale },
+        id
+    } = state
+
+    const inputPinRenderer = createPinRenderer(nodeTypes.input, state)
+    const outputPinRenderer = createPinRenderer(nodeTypes.output, state)
+
     return (
-        <g class="unselectable" transform={`translate(${transform.position})`}>
-            <title>{info}</title>
+        <g class="unselectable" transform={`translate(${position})`}>
+            <title>{getNodeInfo(state.template)}</title>
             <rect
                 id={`node-${id}`}
-                width={nodeWidth}
-                height={nodeHeight}
+                width={scale[0]}
+                height={scale[1]}
                 fill={material.fill}
                 opacity={material.opacity}
                 stroke={material.stroke[selected ? 'active' : 'normal']}
@@ -62,8 +50,8 @@ export const Node = (state: VNodeState) => {
             />
 
             <text
-                x={nodeWidth + 2 * shape.strokeWidth + label.size / 2}
-                y={nodeHeight / 2 + shape.strokeWidth}
+                x={scale[0] + 2 * shape.strokeWidth + label.size / 2}
+                y={scale[1] / 2 + shape.strokeWidth}
                 fontSize={label.size}
                 dominantBaseline="middle"
                 textAnchor="start"
@@ -81,13 +69,7 @@ export const Node = (state: VNodeState) => {
                 transform={`translate(${add2(
                     [],
                     Array(2).fill(shape.strokeWidth),
-                    divN2(
-                        null,
-
-                        sub2([], scale, content.scale),
-
-                        2
-                    )
+                    divN2(null, sub2([], scale, content.scale), 2)
                 )})`}
             >
                 {content.generate(state)}

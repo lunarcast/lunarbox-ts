@@ -16,6 +16,7 @@ export interface VConnection {
 export interface VNodeState {
     transform: {
         position: number[]
+        scale: [number, number]
         zIndex: number
     }
     template: VNodeTemplate
