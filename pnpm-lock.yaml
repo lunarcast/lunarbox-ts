@@ -6,7 +6,7 @@ dependencies:
   '@thi.ng/vectors': 4.0.1
   deepmerge: 4.2.2
   fp-ts: 2.3.1
-  lens.ts: 0.5.1
+  monocle-ts: 2.0.1_fp-ts@2.3.1
   preact: 10.2.1
 devDependencies:
   '@babel/core': 7.8.3
@@ -3769,10 +3769,6 @@ packages:
       node: '>=6'
     resolution:
       integrity: sha512-avPEb8P8EGnwXKClwsNUgryVjllcRqtMYa49NTsbQagYuT1DcXnl1915oxWjoyGrXR6zH/Y0Zc96xWsPcoDKeA==
-  /lens.ts/0.5.1:
-    dev: false
-    resolution:
-      integrity: sha1-lXzYGDjqc1mwwoDyT5R4vG6Suvw=
   /leven/3.1.0:
     dev: true
     engines:
@@ -4078,6 +4074,14 @@ packages:
     hasBin: true
     resolution:
       integrity: sha1-MAV0OOrGz3+MR2fzhkjWaX11yQM=
+  /monocle-ts/2.0.1_fp-ts@2.3.1:
+    dependencies:
+      fp-ts: 2.3.1
+    dev: false
+    peerDependencies:
+      fp-ts: ^2.0.0
+    resolution:
+      integrity: sha512-e1ulohxv2LXuaU1hyziPWmNQRcEL2kRawU60+SVzHjb7i3AKs65KWKLHcXreONJah6I0kibeAnQaCTJ29txWXA==
   /move-concurrently/1.0.1:
     dependencies:
       aproba: 1.2.0
@@ -6189,7 +6193,7 @@ specifiers:
   deepmerge: ^4.2.2
   fp-ts: ^2.3.1
   html-webpack-plugin: ^3.2.0
-  lens.ts: ^0.5.1
+  monocle-ts: ^2.0.1
   preact: ^10.2.1
   source-map-loader: ^0.2.4
   typescript: ^3.7.4

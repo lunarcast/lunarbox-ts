@@ -1,16 +1,15 @@
 import * as Array from 'fp-ts/es6/Array'
-import { flow } from 'fp-ts/es6/function'
-import { EditorState, VNodeState } from '../types/EditorState'
-import { isSelected } from './isSelected'
-import { Setter } from 'lens.ts'
+import { flow, Endomorphism } from 'fp-ts/es6/function'
 import { pipe } from 'fp-ts/es6/pipeable'
+import { getRecordValues } from '../../fp/helpers/getRecordValues'
+import { EditorState, VNodeState } from '../types/EditorState'
+import { nodes, nodeById } from './editorState'
+import { isSelected } from './vNodeState'
 
 /**
  * Getter for an array of nodes.
  */
-export const getNodesArray = EditorState.nodes.get(
-    v => Object.values(v) as VNodeState[]
-)
+export const getNodesArray = flow(nodes.asGetter().get, getRecordValues)
 
 /**
  * Getter returning an array of all selected nodes.
@@ -22,14 +21,14 @@ export const getSelectedNodes = flow(getNodesArray, Array.filter(isSelected))
  *
  * @param setter The setter to use.
  */
-export const setSelectedNodes = (setter: Setter<VNodeState>) => (
+export const setSelectedNodes = (setter: Endomorphism<VNodeState>) => (
     state: EditorState
 ) =>
     pipe(
         state,
         getSelectedNodes,
-        Array.map(VNodeState.set(setter)),
+        Array.map(setter),
         Array.reduce(state, (accumulated, current) => {
-            return EditorState.nodes.k(current.id).set(current)(accumulated)
+            return nodeById(current.id).set(current)(accumulated)
         })
     )

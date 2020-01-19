@@ -1,11 +1,13 @@
 import { pipe } from 'fp-ts/es6/pipeable'
 import * as Record from 'fp-ts/es6/Record'
-import { EditorState, VNodeState } from '../types/EditorState'
+import {} from 'monocle-ts'
+import { nodes } from '../lenses/editorState'
+import { selected } from '../lenses/vNodeState'
 
 /**
  * Unselect a node.
  */
-export const unselectNode = VNodeState.selected.set(false)
+export const unselectNode = selected.set(false)
 
 /**
  * Unselect all nodes from a record.
@@ -13,6 +15,5 @@ export const unselectNode = VNodeState.selected.set(false)
 export const unselectNodes = pipe(
     unselectNode,
     Record.map,
-    // this needs to have access to this so I need to do it this way.
-    f => EditorState.nodes.set(f)
+    nodes.asSetter().modify
 )

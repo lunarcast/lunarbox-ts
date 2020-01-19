@@ -25,12 +25,13 @@ import { startsWith } from '../helpers/startsWith'
 import { unselectNodes } from '../helpers/unselectNodes'
 import { liftNode } from '../lenses/liftNode'
 import { setSelectedNodes } from '../lenses/nodesArray'
-import { EditorState, vNodeOrd, VNodeState } from '../types/EditorState'
+import { nodePosition } from '../lenses/vNodeState'
+import { EditorState, vNodeOrd } from '../types/EditorState'
 import { Node } from './Node'
 
 export const Editor = () => {
     const { state, setState } = useProfunctorState<EditorState>({
-        laseZIndex: -1,
+        lastZIndex: -1,
         nodes: {}
     })
 
@@ -117,7 +118,7 @@ export const Editor = () => {
                     return () =>
                         setState(
                             setSelectedNodes(
-                                VNodeState.transform.position.set(
+                                nodePosition.modify(
                                     old => add2([], delta, old) as number[]
                                 )
                             )

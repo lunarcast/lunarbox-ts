@@ -1,5 +1,7 @@
 import { generateZIndex } from '../helpers/generateZIndex'
 import { EditorState } from '../types/EditorState'
+import { nodeById } from './editorState'
+import { nodeZIndex } from './vNodeState'
 
 /**
  * Lift a node on top of everything else.
@@ -9,5 +11,7 @@ import { EditorState } from '../types/EditorState'
 export const liftNode = (id: number) => (initial: EditorState) => {
     const [index, state] = generateZIndex(initial)
 
-    return EditorState.nodes.k(id).transform.zIndex.set(index)(state)
+    return nodeById(id)
+        .compose(nodeZIndex)
+        .set(index)(state)
 }

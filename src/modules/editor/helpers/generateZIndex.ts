@@ -1,7 +1,7 @@
 import { EditorState } from '../types/EditorState'
 import { State } from 'fp-ts/es6/State'
-
-const getLastZIndex = EditorState.laseZIndex.get()
+import { lastZIndex } from '../lenses/editorState'
+import { increment } from 'fp-ts/es6/function'
 
 /**
  * Takes an editor state and returns a new one and a new z index.
@@ -11,8 +11,8 @@ const getLastZIndex = EditorState.laseZIndex.get()
 export const generateZIndex: State<EditorState, number> = (
     state: EditorState
 ) => {
-    const last = getLastZIndex(state)
-    const newState = EditorState.laseZIndex.set(v => v + 1)(state)
+    const last = lastZIndex.get(state)
+    const newState = lastZIndex.modify(increment)(state)
 
     return [last + 1, newState]
 }

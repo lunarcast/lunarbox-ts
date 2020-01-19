@@ -5,6 +5,7 @@ import { defaultVNodeTemplate } from '../constants'
 import { EditorState, VNodeState } from '../types/EditorState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
 import { generateZIndex } from './generateZIndex'
+import { nodeById } from '../lenses/editorState'
 
 /**
  * Create a function which spawns nodes.
@@ -29,7 +30,7 @@ export const spawnNode = (
         }
     }
 
-    const finalState = EditorState.nodes.k(zIndex).set(nodeState)(state)
+    const finalState = nodeById(zIndex).set(nodeState)(state)
 
     return [nodeState, finalState]
 }

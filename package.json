@@ -32,7 +32,7 @@
         "@thi.ng/vectors": "^4.0.1",
         "deepmerge": "^4.2.2",
         "fp-ts": "^2.3.1",
-        "lens.ts": "^0.5.1",
+        "monocle-ts": "^2.0.1",
         "preact": "^10.2.1"
     },
     "license": "GPL-3.0"

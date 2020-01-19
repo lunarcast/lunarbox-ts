@@ -1,4 +1,5 @@
-import { EditorState } from '../types/EditorState'
+import { nodeById } from '../lenses/editorState'
+import { selected } from '../lenses/vNodeState'
 
 /**
  * Select a node given it's id
@@ -6,4 +7,6 @@ import { EditorState } from '../types/EditorState'
  * @param id The id of the node.
  */
 export const selectNode = (id: number) =>
-    EditorState.nodes.k(id).selected.set(true)
+    nodeById(id)
+        .compose(selected)
+        .set(true)

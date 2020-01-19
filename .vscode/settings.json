@@ -21,6 +21,7 @@
         "rstream",
         "semigroup",
         "stateful",
+        "typesafe",
         "unselectable",
         "use",
         "xstate"

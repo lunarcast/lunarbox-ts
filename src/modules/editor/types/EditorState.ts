@@ -1,6 +1,6 @@
-import { VNodeTemplate } from './VNodeTemplate'
-import { lens } from 'lens.ts'
 import { contramap, ordNumber } from 'fp-ts/es6/Ord'
+import { Lens } from 'monocle-ts'
+import { VNodeTemplate } from './VNodeTemplate'
 
 /**
  * State used to render nodes.
@@ -17,11 +17,6 @@ export interface VNodeState {
 }
 
 /**
- * Lens for node states.
- */
-export const VNodeState = lens<VNodeState>()
-
-/**
  * Used to sort nodes.
  */
 export const vNodeOrd = contramap((node: VNodeState) => node.transform.zIndex)(
@@ -32,11 +27,6 @@ export const vNodeOrd = contramap((node: VNodeState) => node.transform.zIndex)(
  * State for the editor componentCHR
  */
 export interface EditorState {
-    laseZIndex: number
+    lastZIndex: number
     nodes: Record<number, VNodeState>
 }
-
-/**
- * Lens for editor states.
- */
-export const EditorState = lens<EditorState>()
