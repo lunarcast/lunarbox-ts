@@ -17,6 +17,8 @@ import {
 import { connections } from '../lenses/vNodeState'
 import { EditorState, VNodeState } from '../types/EditorState'
 import { PinTemplate, VNodeTemplate } from '../types/VNodeTemplate'
+import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
+import { some } from 'fp-ts/es6/Option'
 
 /**
  * Get the position of any pin
@@ -80,54 +82,37 @@ const Pin = (type: nodeTypes) =>
 
             const handleClick = useEffectufulCallback(() => {
                 const setter = Option.some((state: EditorState) => {
-                    if (type === nodeTypes.output) {
-                        return pipe(
-                            state.connectionInProgress.end,
-                            Option.fold(
-                                () => {
-                                    return connectionInProgress
-                                        .compose(start)
-                                        .set(
-                                            Option.some({
-                                                nodeId: id,
-                                                index
-                                            })
-                                        )(state)
-                                },
-                                end => {
-                                    console.log('here')
-
-                                    return pipe(
-                                        state,
-                                        connectionInProgress.set({
-                                            end: Option.none,
-                                            start: Option.none
-                                        }),
-                                        nodeById(id)
-                                            .compose(connections)
-                                            .modify(
-                                                flow(
-                                                    Array.updateAt(
-                                                        index,
-                                                        Option.some(end)
-                                                    ),
-                                                    // this should never happen
-                                                    Option.getOrElse(
-                                                        constant([])
-                                                    )
-                                                )
-                                            )
-                                    )
-                                }
-                            )
-                        )
+                    if (type === nodeTypes.input) {
+                        return connectionInProgress.compose(end).set(
+                            Option.some({
+                                nodeId: id,
+                                index
+                            })
+                        )(state)
                     }
 
-                    return connectionInProgress.compose(end).set(
-                        Option.some({
-                            nodeId: id,
-                            index
-                        })
+                    return pipe(
+                        state.connectionInProgress.end,
+                        Option.fold(
+                            constant(
+                                connectionInProgress.compose(start).set(
+                                    Option.some({
+                                        nodeId: id,
+                                        index
+                                    })
+                                )
+                            ),
+                            end =>
+                                flow(
+                                    connectionInProgress.set({
+                                        end: Option.none,
+                                        start: Option.none
+                                    }),
+                                    nodeById(id)
+                                        .compose(connections)
+                                        .modify(tryUpdateAt(index, some(end)))
+                                )
+                        )
                     )(state)
                 })
 
