@@ -6,6 +6,7 @@ import { EditorState, VNodeState } from '../types/EditorState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
 import { generateZIndex } from './generateZIndex'
 import { nodeById } from '../lenses/editorState'
+import { connections } from '../lenses/vNodeState'
 
 /**
  * Create a function which spawns nodes.
@@ -25,9 +26,9 @@ export const spawnNode = (
         template,
         transform: {
             position: [0, 0],
-            scale: [100, 100],
             zIndex
-        }
+        },
+        connections: []
     }
 
     const finalState = nodeById(zIndex).set(nodeState)(state)

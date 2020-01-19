@@ -1,4 +1,4 @@
-import { divN2, sub2 } from '@thi.ng/vectors'
+import { divN2, sub2, add2 } from '@thi.ng/vectors'
 import { bullet } from '../helpers/bullet'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import { VNodeState } from '../types/EditorState'
@@ -25,14 +25,10 @@ export const Node = (state: VNodeState) => {
 
     const nodeWidth = Math.max(
         2 * shape.strokeWidth + totalPinsWidth,
-        transform.scale[0],
         content.scale[0] + 2 * content.margin
     )
 
-    const nodeHeight = Math.max(
-        transform.scale[1],
-        content.scale[1] + 2 * (content.margin + shape.pinRadius)
-    )
+    const nodeHeight = content.scale[1] + 2 * (content.margin + shape.pinRadius)
 
     const scale = [nodeWidth, nodeHeight] as [number, number]
 
@@ -67,7 +63,7 @@ export const Node = (state: VNodeState) => {
 
             <text
                 x={nodeWidth + 2 * shape.strokeWidth + label.size / 2}
-                y={nodeHeight / 2}
+                y={nodeHeight / 2 + shape.strokeWidth}
                 fontSize={label.size}
                 dominantBaseline="middle"
                 textAnchor="start"
@@ -82,10 +78,16 @@ export const Node = (state: VNodeState) => {
 
             <g
                 id={`node-${id}`}
-                transform={`translate(${divN2(
-                    null,
-                    sub2([], scale, content.scale),
-                    2
+                transform={`translate(${add2(
+                    [],
+                    Array(2).fill(shape.strokeWidth),
+                    divN2(
+                        null,
+
+                        sub2([], scale, content.scale),
+
+                        2
+                    )
                 )})`}
             >
                 {content.generate(state)}
