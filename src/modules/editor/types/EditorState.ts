@@ -1,6 +1,6 @@
+import { Option } from 'fp-ts/es6/Option'
 import { contramap, ordNumber } from 'fp-ts/es6/Ord'
 import { VNodeTemplate } from './VNodeTemplate'
-import { Option } from 'fp-ts/es6/Option'
 
 /**
  * State necessary for rendering connections
@@ -38,4 +38,8 @@ export const vNodeOrd = contramap((node: VNodeState) => node.transform.zIndex)(
 export interface EditorState {
     lastZIndex: number
     nodes: Record<number, VNodeState>
+    connectionInProgress: {
+        start: Option<VConnection>
+        end: Option<VConnection>
+    }
 }

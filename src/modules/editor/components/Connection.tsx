@@ -46,7 +46,9 @@ export const Connection = ({ state, output, index: outputIndex }: Props) => {
                 output
             )
 
-            return <line {...{ x1, x2, y1, y2 }}></line>
+            return (
+                <line width="2px" stroke="blue" {...{ x1, x2, y1, y2 }}></line>
+            )
         }),
 
         // for react to be able to handle Options

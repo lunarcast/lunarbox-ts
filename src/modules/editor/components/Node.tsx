@@ -1,10 +1,12 @@
+import { ProfunctorState } from '@staltz/use-profunctor-state'
 import { add2, divN2, sub2 } from '@thi.ng/vectors'
 import { h } from 'preact'
+import { memo } from 'preact/compat'
+import { nodeTypes } from '../constants'
 import { bullet } from '../helpers/bullet'
 import { VNodeState } from '../types/EditorState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
-import { createPinRenderer } from './Pin'
-import { nodeTypes } from '../constants'
+import { InputPin, OutputPin } from './Pin'
 
 const getNodeInfo = ({ label, pins }: VNodeTemplate) =>
     [
@@ -19,21 +21,22 @@ const getNodeInfo = ({ label, pins }: VNodeTemplate) =>
         ...pins.outputs.map(pin => bullet(pin.label))
     ].join('\n')
 
+interface Props {
+    state: VNodeState
+}
+
 /**
  * Used to render nodes.
  *
  * @param current The current state of the node.
  */
-export const Node = (state: VNodeState) => {
+export const Node = memo(({ state }: Props) => {
     const {
         template: { label, material, shape, pins, content },
         selected,
         transform: { position, scale },
         id
     } = state
-
-    const inputPinRenderer = createPinRenderer(nodeTypes.input, state)
-    const outputPinRenderer = createPinRenderer(nodeTypes.output, state)
 
     return (
         <g class="unselectable" transform={`translate(${position})`}>
@@ -61,8 +64,12 @@ export const Node = (state: VNodeState) => {
                 {label.text}
             </text>
 
-            {pins.inputs.flatMap(inputPinRenderer)}
-            {pins.outputs.flatMap(outputPinRenderer)}
+            {pins.inputs.flatMap((pin, index) => (
+                <InputPin {...{ index, pin, state }} key={index} />
+            ))}
+            {pins.outputs.flatMap((pin, index) => (
+                <OutputPin {...{ index, pin, state }} key={index} />
+            ))}
 
             <g
                 id={`node-${id}`}
@@ -76,4 +83,4 @@ export const Node = (state: VNodeState) => {
             </g>
         </g>
     )
-}
+})

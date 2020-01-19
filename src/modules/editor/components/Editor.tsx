@@ -5,7 +5,7 @@ import { array } from 'fp-ts/es6/Array'
 import { constant, constVoid, flow, tuple } from 'fp-ts/es6/function'
 import { IO, io } from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
-import { option } from 'fp-ts/es6/Option'
+import { none, option } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import * as Reader from 'fp-ts/es6/Reader'
 import * as Record from 'fp-ts/es6/Record'
@@ -18,6 +18,7 @@ import { getElementId } from '../../core/lenses/html'
 import { full } from '../../core/styles/full'
 import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
 import { useIo } from '../../fp/hooks/useIO'
+import { EditorProvider } from '../contexts/editor'
 import { resolveEventTarget } from '../helpers/resolveEventTarget'
 import { selectNode } from '../helpers/selectNode'
 import { spawnNode } from '../helpers/spawnNode'
@@ -28,12 +29,19 @@ import { setSelectedNodes } from '../lenses/nodesArray'
 import { nodePosition } from '../lenses/vNodeState'
 import { EditorState, vNodeOrd } from '../types/EditorState'
 import { Node } from './Node'
+import { NodeConnections } from './NodeConnections'
 
 export const Editor = () => {
-    const { state, setState } = useProfunctorState<EditorState>({
+    const profunctorState = useProfunctorState<EditorState>({
         lastZIndex: -1,
-        nodes: {}
+        nodes: {},
+        connectionInProgress: {
+            start: none,
+            end: none
+        }
     })
+
+    const { state, setState } = profunctorState
 
     // At the start of the program we spawn 2 nodes for testing
     // TODO remove
@@ -134,21 +142,37 @@ export const Editor = () => {
         }
     )
 
-    const children = pipe(
+    const nodes = pipe(
         state.nodes,
         Record.collect(flow(tuple, snd)),
-        Array.sort(vNodeOrd),
-        Array.map(node => <Node {...node} key={node.id} />)
+        Array.sort(vNodeOrd)
     )
 
+    const children = [
+        ...pipe(
+            nodes,
+            Array.map(node => {
+                return <Node state={node} key={node.id} />
+            })
+        ),
+        ...pipe(
+            nodes,
+            Array.map(({ id }) => (
+                <NodeConnections state={state} id={id} key={id} />
+            ))
+        )
+    ]
+
     return (
-        <svg
-            style={{ ...full, background: '#222222' }}
-            onMouseUp={handleMouseUp}
-            onMouseDown={handleMouseDown}
-            onMouseMove={handleMouseMove}
-        >
-            {children}
-        </svg>
+        <EditorProvider value={profunctorState}>
+            <svg
+                style={{ ...full, background: '#222222' }}
+                onMouseUp={handleMouseUp}
+                onMouseDown={handleMouseDown}
+                onMouseMove={handleMouseMove}
+            >
+                {children}
+            </svg>
+        </EditorProvider>
     )
 }
