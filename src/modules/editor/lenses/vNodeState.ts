@@ -1,14 +1,26 @@
 import { Lens } from 'monocle-ts'
-import { VNodeState } from '../types/EditorState'
+import { SConnection } from '../../dataflow/types/SGraph'
+import { VConnection, VNodeState } from '../types/EditorState'
 
-export const selected = Lens.fromProp<VNodeState>()('selected')
-export const transform = Lens.fromProp<VNodeState>()('transform')
+const VNodeStateLens = Lens.fromProp<VNodeState>()
+const VNodeStateTransform = Lens.fromProp<VNodeState['transform']>()
+const VConnectionLens = Lens.fromProp<VConnection>()
 
-export const position = Lens.fromProp<VNodeState['transform']>()('position')
-export const zIndex = Lens.fromProp<VNodeState['transform']>()('zIndex')
+export const selected = VNodeStateLens('selected')
+export const transform = VNodeStateLens('transform')
+export const connections = VNodeStateLens('connections')
+
+export const position = VNodeStateTransform('position')
+export const zIndex = VNodeStateTransform('zIndex')
+
+export const nodeIndex = VConnectionLens('index')
+export const nodeId = VConnectionLens('nodeId')
 
 export const nodePosition = transform.compose(position)
 export const nodeZIndex = transform.compose(zIndex)
+
+export const connectionById = (id: number) =>
+    Lens.fromProp<SConnection[]>()(id).asOptional()
 
 /**
  * Predicate returning true only if the node is currently selected.

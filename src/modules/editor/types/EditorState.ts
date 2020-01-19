@@ -1,6 +1,14 @@
 import { contramap, ordNumber } from 'fp-ts/es6/Ord'
-import { Lens } from 'monocle-ts'
 import { VNodeTemplate } from './VNodeTemplate'
+import { Option } from 'fp-ts/es6/Option'
+
+/**
+ * State necessary for rendering connections
+ */
+export interface VConnection {
+    index: number
+    nodeId: number
+}
 
 /**
  * State used to render nodes.
@@ -8,12 +16,12 @@ import { VNodeTemplate } from './VNodeTemplate'
 export interface VNodeState {
     transform: {
         position: number[]
-        scale: number[]
         zIndex: number
     }
     template: VNodeTemplate
     selected: boolean
     id: number
+    connections: Option<VConnection>[]
 }
 
 /**
