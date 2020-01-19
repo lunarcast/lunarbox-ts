@@ -19,10 +19,10 @@ export interface VNodeState {
         scale: [number, number]
         zIndex: number
     }
+    connections: Option<VConnection>[]
     template: VNodeTemplate
     selected: boolean
     id: number
-    connections: Option<VConnection>[]
 }
 
 /**

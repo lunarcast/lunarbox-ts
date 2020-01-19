@@ -7,6 +7,10 @@ import { EditorState, VNodeState } from '../types/EditorState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
 import { calculateTotalPinWidth } from './calculateTotalPinWidth'
 import { generateZIndex } from './generateZIndex'
+import { pipe } from 'fp-ts/es6/pipeable'
+import * as Array from 'fp-ts/es6/Array'
+import { constant } from 'fp-ts/es6/function'
+import * as Option from 'fp-ts/es6/Option'
 
 /**
  * Create a function which spawns nodes.
@@ -43,7 +47,10 @@ export const spawnNode = (
             scale: [width, height],
             zIndex
         },
-        connections: []
+        connections: pipe(
+            template.pins.inputs,
+            Array.map(constant(Option.none))
+        )
     }
 
     const finalState = nodeById(zIndex).set(nodeState)(state)
