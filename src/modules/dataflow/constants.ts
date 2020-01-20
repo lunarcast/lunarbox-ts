@@ -1,6 +1,6 @@
-import { SNode, SNodeKinds } from './types/SGraph'
-import { Label } from '../typeChecking/types/Labels'
 import { stream } from '@thi.ng/rstream'
+import { Label } from '../typeChecking/types/Labels'
+import { SNode, SNodeKinds } from './types/SGraph'
 
 /**
  * Empty node.

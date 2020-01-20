@@ -1,10 +1,7 @@
 import * as Either from 'fp-ts/es6/Either'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { SInputPin, SNode } from '../../dataflow/types/SGraph'
-import {
-    LabelValidationFailureReasons,
-    LabelValidationResult
-} from '../types/Errors'
+import { LabelValidationFailureReasons, LabelValidationResult } from '../types/Errors'
 import { Label } from '../types/Labels'
 import { createLabelValidationError } from './createLabelValidationError'
 import { getOutputPinLabel } from './getOutputPinLabel'

@@ -3,10 +3,10 @@ import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { h } from 'preact'
 import { pinTypes } from '../constants'
+import { calculatePinPosition } from '../helpers/calculatePinPosition'
 import { nodeById } from '../lenses/editorState'
 import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
-import { calculatePinPosition } from '../helpers/calculatePinPosition'
 
 interface Props {
     state: EditorState

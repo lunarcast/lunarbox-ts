@@ -1,6 +1,6 @@
 import { Option } from 'fp-ts/es6/Option'
-import { VPinPointer } from './VPinPointer'
 import { VNodeTemplate } from './VNodeTemplate'
+import { VPinPointer } from './VPinPointer'
 /**
  * State used to render nodes.
  */

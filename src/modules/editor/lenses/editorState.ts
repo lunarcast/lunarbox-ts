@@ -1,6 +1,6 @@
 import { Lens } from 'monocle-ts'
-import { EditorState } from '../types/EditorState'
 import { pinTypes } from '../constants'
+import { EditorState } from '../types/EditorState'
 
 const EditorStateLens = Lens.fromProp<EditorState>()
 export const createConnectionInProgressLens = Lens.fromProp<

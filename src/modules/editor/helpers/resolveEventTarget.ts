@@ -1,4 +1,4 @@
-import { Predicate, flow } from 'fp-ts/es6/function'
+import { Predicate } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { Reader } from 'fp-ts/es6/Reader'

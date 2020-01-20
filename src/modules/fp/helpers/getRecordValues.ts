@@ -1,7 +1,7 @@
-import * as Record from 'fp-ts/es6/Record'
 import { flow, tuple } from 'fp-ts/es6/function'
-import { snd } from 'fp-ts/es6/Tuple'
 import { pipe } from 'fp-ts/es6/pipeable'
+import * as Record from 'fp-ts/es6/Record'
+import { snd } from 'fp-ts/es6/Tuple'
 
 /**
  *  Typesafe version of Object.values()

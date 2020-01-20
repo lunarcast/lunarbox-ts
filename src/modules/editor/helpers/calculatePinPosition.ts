@@ -1,6 +1,6 @@
 import { pinTypes } from '../constants'
-import { calculateTotalPinWidth } from './calculateTotalPinWidth'
 import { VNodeTemplate } from '../types/VNodeTemplate'
+import { calculateTotalPinWidth } from './calculateTotalPinWidth'
 /**
  * Get the position of any pin
  *

@@ -1,7 +1,7 @@
-import { EditorState } from '../types/EditorState'
+import { increment } from 'fp-ts/es6/function'
 import { State } from 'fp-ts/es6/State'
 import { lastZIndex } from '../lenses/editorState'
-import { increment } from 'fp-ts/es6/function'
+import { EditorState } from '../types/EditorState'
 
 /**
  * Takes an editor state and returns a new one and a new z index.

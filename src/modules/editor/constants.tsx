@@ -1,6 +1,5 @@
+import { Fragment, h } from 'preact'
 import { VNodeTemplate } from './types/VNodeTemplate'
-import { h, Fragment } from 'preact'
-import { none } from 'fp-ts/es6/Option'
 
 /**
  * Sane defaults for instantiating nodes.

@@ -1,8 +1,6 @@
-import { AppContext } from '../types/AppContext'
+import { h } from 'preact'
 import { Editor } from '../../editor/components/Editor'
 
-const editor = new Editor()
-
-export const app = (ctx: AppContext) => {
-    return [editor]
+export const app = () => {
+    return <Editor />
 }

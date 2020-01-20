@@ -1,10 +1,7 @@
-import * as Array from 'fp-ts/es6/Array'
-import { pipe } from 'fp-ts/es6/pipeable'
 import { Fragment, h } from 'preact'
 import { nodeById } from '../lenses/editorState'
 import { EditorState } from '../types/EditorState'
 import { Connection } from './Connection'
-import { connections } from '../lenses/vNodeState'
 
 interface Props {
     state: EditorState

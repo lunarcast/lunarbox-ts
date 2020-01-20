@@ -1,6 +1,6 @@
 import { pipe } from 'fp-ts/es6/pipeable'
 import * as Record from 'fp-ts/es6/Record'
-import {} from 'monocle-ts'
+import { } from 'monocle-ts'
 import { nodes } from '../lenses/editorState'
 import { selected } from '../lenses/vNodeState'
 

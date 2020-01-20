@@ -1,5 +1,5 @@
-import { VNodeState } from './VNodeState'
 import { JSX } from 'preact'
+import { VNodeState } from './VNodeState'
 
 export type PinTemplate = {
     label: string

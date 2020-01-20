@@ -1,8 +1,6 @@
-import { ProfunctorState } from '@staltz/use-profunctor-state'
 import { add2, divN2, sub2 } from '@thi.ng/vectors'
 import { h } from 'preact'
 import { memo } from 'preact/compat'
-import { pinTypes } from '../constants'
 import { bullet } from '../helpers/bullet'
 import { VNodeState } from '../types/VNodeState'
 import { VNodeTemplate } from '../types/VNodeTemplate'

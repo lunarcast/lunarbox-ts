@@ -1,4 +1,8 @@
 import merge from 'deepmerge'
+import * as Array from 'fp-ts/es6/Array'
+import { constant } from 'fp-ts/es6/function'
+import * as Option from 'fp-ts/es6/Option'
+import { pipe } from 'fp-ts/es6/pipeable'
 import { State } from 'fp-ts/es6/State'
 import { DeepPartial } from 'utility-types'
 import { defaultVNodeTemplate } from '../constants'
@@ -8,10 +12,6 @@ import { VNodeState } from '../types/VNodeState'
 import { VNodeTemplate } from '../types/VNodeTemplate'
 import { calculateTotalPinWidth } from './calculateTotalPinWidth'
 import { generateZIndex } from './generateZIndex'
-import { pipe } from 'fp-ts/es6/pipeable'
-import * as Array from 'fp-ts/es6/Array'
-import { constant } from 'fp-ts/es6/function'
-import * as Option from 'fp-ts/es6/Option'
 
 /**
  * Create a function which spawns nodes.

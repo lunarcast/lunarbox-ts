@@ -1,6 +1,6 @@
-import { useContext } from 'preact/hooks'
-import { h, createContext, FunctionComponent } from 'preact'
 import { none, Option, some } from 'fp-ts/es6/Option'
+import { createContext, FunctionComponent, h } from 'preact'
+import { useContext } from 'preact/hooks'
 
 /**
  * Helper to create a context and a hook for it.

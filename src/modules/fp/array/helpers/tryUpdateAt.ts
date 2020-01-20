@@ -1,6 +1,6 @@
 import * as Array from 'fp-ts/es6/Array'
-import * as Option from 'fp-ts/es6/Option'
 import { constant } from 'fp-ts/es6/function'
+import * as Option from 'fp-ts/es6/Option'
 
 /**
  * Same as Array.updateAt but returns the original array if the index is out of bounds

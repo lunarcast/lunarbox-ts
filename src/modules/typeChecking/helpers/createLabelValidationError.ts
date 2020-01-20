@@ -1,8 +1,4 @@
-import {
-    LabelValidationError,
-    LabelValidationFailureReasons,
-    LabelValidationFailureReasonToType
-} from '../types/Errors'
+import { LabelValidationError, LabelValidationFailureReasons, LabelValidationFailureReasonToType } from '../types/Errors'
 
 /**
  * Creates a function used to create errors with the initially given reason.

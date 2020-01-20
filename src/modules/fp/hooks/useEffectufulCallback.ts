@@ -1,5 +1,5 @@
-import { IO } from 'fp-ts/es6/IO'
 import { flow } from 'fp-ts/es6/function'
+import { IO } from 'fp-ts/es6/IO'
 
 /**
  * Takes a function and returns another one which runs the returned side effects

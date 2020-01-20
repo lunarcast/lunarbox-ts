@@ -1,10 +1,10 @@
 import * as Array from 'fp-ts/es6/Array'
-import { flow, Endomorphism } from 'fp-ts/es6/function'
+import { Endomorphism, flow } from 'fp-ts/es6/function'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { getRecordValues } from '../../fp/helpers/getRecordValues'
 import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
-import { nodes, nodeById } from './editorState'
+import { nodeById, nodes } from './editorState'
 import { isSelected } from './vNodeState'
 
 /**
