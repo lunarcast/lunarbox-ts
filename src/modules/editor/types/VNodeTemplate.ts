@@ -1,10 +1,13 @@
-import { VNodeState } from './EditorState'
+import { VNodeState } from './VNodeState'
 import { JSX } from 'preact'
 
 export type PinTemplate = {
     label: string
 }
 
+/**
+ * Template for different built in nodes.
+ */
 export interface VNodeTemplate {
     label: {
         text: string

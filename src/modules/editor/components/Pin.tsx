@@ -1,11 +1,12 @@
-import * as Array from 'fp-ts/es6/Array'
 import { constant, flow } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
+import { some } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { Fragment, h } from 'preact'
 import { memo } from 'preact/compat'
+import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
 import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
-import { nodeTypes } from '../constants'
+import { pinTypes } from '../constants'
 import { useEditor } from '../contexts/editor'
 import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
 import {
@@ -15,10 +16,10 @@ import {
     start
 } from '../lenses/editorState'
 import { connections } from '../lenses/vNodeState'
-import { EditorState, VNodeState } from '../types/EditorState'
+import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
+import { EditorState } from '../types/EditorState'
+import { VNodeState } from '../types/VNodeState'
 import { PinTemplate, VNodeTemplate } from '../types/VNodeTemplate'
-import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
-import { some } from 'fp-ts/es6/Option'
 
 /**
  * Get the position of any pin
@@ -30,11 +31,11 @@ import { some } from 'fp-ts/es6/Option'
  */
 export const calculatePinPosition = (
     index: number,
-    nodeType: nodeTypes,
+    nodeType: pinTypes,
     scale: [number, number],
     { shape, pins }: VNodeTemplate
 ) => {
-    const total = (nodeType === nodeTypes.input ? pins.inputs : pins.outputs)
+    const total = (nodeType === pinTypes.input ? pins.inputs : pins.outputs)
         .length
 
     const xOffset =
@@ -43,7 +44,7 @@ export const calculatePinPosition = (
         calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
     const x = rawX + xOffset
 
-    const y = nodeType === nodeTypes.input ? 0 : scale[1]
+    const y = nodeType === pinTypes.input ? 0 : scale[1]
 
     return [x, y] as const
 }
@@ -59,7 +60,7 @@ interface Props {
  *
  * @param type The type of the pin
  */
-const Pin = (type: nodeTypes) =>
+const Pin = (type: pinTypes) =>
     memo(
         ({
             index,
@@ -82,7 +83,7 @@ const Pin = (type: nodeTypes) =>
 
             const handleClick = useEffectufulCallback(() => {
                 const setter = Option.some((state: EditorState) => {
-                    if (type === nodeTypes.input) {
+                    if (type === pinTypes.input) {
                         return connectionInProgress.compose(end).set(
                             Option.some({
                                 nodeId: id,
@@ -92,7 +93,7 @@ const Pin = (type: nodeTypes) =>
                     }
 
                     return pipe(
-                        state.connectionInProgress.end,
+                        state.connectionInProgress[pinTypes.input],
                         Option.fold(
                             constant(
                                 connectionInProgress.compose(start).set(
@@ -104,10 +105,9 @@ const Pin = (type: nodeTypes) =>
                             ),
                             end =>
                                 flow(
-                                    connectionInProgress.set({
-                                        end: Option.none,
-                                        start: Option.none
-                                    }),
+                                    connectionInProgress.set(
+                                        connectionInProgressMonoid.empty
+                                    ),
                                     nodeById(id)
                                         .compose(connections)
                                         .modify(tryUpdateAt(index, some(end)))
@@ -139,5 +139,5 @@ const Pin = (type: nodeTypes) =>
         }
     )
 
-export const OutputPin = Pin(nodeTypes.output)
-export const InputPin = Pin(nodeTypes.input)
+export const OutputPin = Pin(pinTypes.output)
+export const InputPin = Pin(pinTypes.input)

@@ -27,18 +27,17 @@ import { unselectNodes } from '../helpers/unselectNodes'
 import { liftNode } from '../lenses/liftNode'
 import { setSelectedNodes } from '../lenses/nodesArray'
 import { nodePosition } from '../lenses/vNodeState'
-import { EditorState, vNodeOrd } from '../types/EditorState'
+import { EditorState } from '../types/EditorState'
+import { vNodeOrd } from '../ords/vNodeOrd'
 import { Node } from './Node'
 import { NodeConnections } from './NodeConnections'
+import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
 
 export const Editor = () => {
     const profunctorState = useProfunctorState<EditorState>({
         lastZIndex: -1,
         nodes: {},
-        connectionInProgress: {
-            start: none,
-            end: none
-        }
+        connectionInProgress: connectionInProgressMonoid.empty
     })
 
     const { state, setState } = profunctorState

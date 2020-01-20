@@ -1,10 +1,10 @@
 import { Lens } from 'monocle-ts'
-import { SConnection } from '../../dataflow/types/SGraph'
-import { VConnection, VNodeState } from '../types/EditorState'
+import { VNodeState } from '../types/VNodeState'
+import { VPinPointer } from '../types/VPinPointer'
 
 const VNodeStateLens = Lens.fromProp<VNodeState>()
 const VNodeStateTransform = Lens.fromProp<VNodeState['transform']>()
-const VConnectionLens = Lens.fromProp<VConnection>()
+const VConnectionLens = Lens.fromProp<VPinPointer>()
 
 export const selected = VNodeStateLens('selected')
 export const transform = VNodeStateLens('transform')
