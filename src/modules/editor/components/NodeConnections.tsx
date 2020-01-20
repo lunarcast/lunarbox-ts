@@ -17,10 +17,12 @@ interface Props {
 export const NodeConnections = ({ id, state }: Props) => {
     const node = nodeById(id).get(state)
 
+    console.log(node.connections)
+
     const content = node.connections.map((_, index) => (
         <Connection
             key={`${index}-${id}`}
-            output={node}
+            end={node}
             state={state}
             index={index}
         />

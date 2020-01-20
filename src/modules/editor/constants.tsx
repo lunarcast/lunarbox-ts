@@ -59,12 +59,18 @@ export const defaultVNodeTemplate: VNodeTemplate = {
         outputs: [
             {
                 label: 'result'
+            },
+            {
+                label: 'result'
             }
         ]
     }
 }
 
 export enum pinTypes {
-    input,
-    output
+    // this is 0 because it's the start of a connection
+    output = 0,
+
+    // this is 1 because it's the end of a connection
+    input = 1
 }

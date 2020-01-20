@@ -6,11 +6,11 @@ import { pinTypes } from '../constants'
 import { nodeById } from '../lenses/editorState'
 import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
-import { calculatePinPosition } from './Pin'
+import { calculatePinPosition } from '../helpers/calculatePinPosition'
 
 interface Props {
     state: EditorState
-    output: VNodeState
+    end: VNodeState
     index: number
 }
 
@@ -29,22 +29,20 @@ const calculateAbsolutePinPosition = (
     return add2([], position, transform.position)
 }
 
-export const Connection = ({ state, output, index: outputIndex }: Props) => {
-    const connection = output.connections[outputIndex]
-
+export const Connection = ({ state, end, index: endIndex }: Props) => {
     return pipe(
-        connection,
-        Option.map(({ nodeId, index: inputIndex }) => {
+        end.connections[endIndex],
+        Option.map(({ nodeId, index: startIndex }) => {
             const [x1, y1] = calculateAbsolutePinPosition(
-                inputIndex,
-                pinTypes.input,
+                startIndex,
+                pinTypes.output,
                 nodeById(nodeId).get(state)
             )
 
             const [x2, y2] = calculateAbsolutePinPosition(
-                outputIndex,
-                pinTypes.output,
-                output
+                endIndex,
+                pinTypes.input,
+                end
             )
 
             return (

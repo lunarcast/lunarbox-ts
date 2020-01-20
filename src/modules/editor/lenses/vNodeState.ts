@@ -20,7 +20,7 @@ export const nodePosition = transform.compose(position)
 export const nodeZIndex = transform.compose(zIndex)
 
 export const connectionById = (id: number) =>
-    Lens.fromProp<VNodeState['connections']>()(id)
+    connections.compose(Lens.fromProp<VNodeState['connections']>()(id))
 
 /**
  * Predicate returning true only if the node is currently selected.

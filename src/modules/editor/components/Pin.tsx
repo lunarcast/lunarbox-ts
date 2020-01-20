@@ -1,6 +1,7 @@
-import { constant, flow } from 'fp-ts/es6/function'
+import { array } from 'fp-ts/es6/Array'
+import { constant, flow, identity } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
-import { some } from 'fp-ts/es6/Option'
+import { option, some } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { Fragment, h } from 'preact'
 import { memo } from 'preact/compat'
@@ -8,46 +9,14 @@ import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
 import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
 import { pinTypes } from '../constants'
 import { useEditor } from '../contexts/editor'
-import { calculateTotalPinWidth } from '../helpers/calculateTotalPinWidth'
-import {
-    connectionInProgress,
-    end,
-    nodeById,
-    start
-} from '../lenses/editorState'
-import { connections } from '../lenses/vNodeState'
+import { calculatePinPosition } from '../helpers/calculatePinPosition'
+import { connectionInProgress, nodeById } from '../lenses/editorState'
 import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
-import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
-import { PinTemplate, VNodeTemplate } from '../types/VNodeTemplate'
-
-/**
- * Get the position of any pin
- *
- * @param index The index of the pin.
- * @param nodeType The type of the pin.
- * @param scale The scale of the node.
- * @param template The template to use for the node
- */
-export const calculatePinPosition = (
-    index: number,
-    nodeType: pinTypes,
-    scale: [number, number],
-    { shape, pins }: VNodeTemplate
-) => {
-    const total = (nodeType === pinTypes.input ? pins.inputs : pins.outputs)
-        .length
-
-    const xOffset =
-        (scale[0] - calculateTotalPinWidth(total, shape.pinRadius)) / 2
-    const rawX =
-        calculateTotalPinWidth(index, shape.pinRadius) + shape.pinRadius
-    const x = rawX + xOffset
-
-    const y = nodeType === pinTypes.input ? 0 : scale[1]
-
-    return [x, y] as const
-}
+import { PinTemplate } from '../types/VNodeTemplate'
+import { VPinPointer } from '../types/VPinPointer'
+import { tuple } from 'fp-ts/es6/Tuple'
+import { connections } from '../lenses/vNodeState'
 
 interface Props {
     pin: PinTemplate
@@ -82,59 +51,53 @@ const Pin = (type: pinTypes) =>
             const editorProfunctorState = useEditor()
 
             const handleClick = useEffectufulCallback(() => {
-                const setter = Option.some((state: EditorState) => {
-                    if (type === pinTypes.input) {
-                        return connectionInProgress.compose(end).set(
+                const setter = flow(
+                    connectionInProgress.modify(
+                        tryUpdateAt(
+                            type,
                             Option.some({
-                                nodeId: id,
-                                index
+                                index,
+                                nodeId: id
                             })
-                        )(state)
-                    }
-
-                    return pipe(
-                        state.connectionInProgress[pinTypes.input],
-                        Option.fold(
-                            constant(
-                                connectionInProgress.compose(start).set(
-                                    Option.some({
-                                        nodeId: id,
-                                        index
-                                    })
-                                )
-                            ),
-                            end =>
+                        )
+                    ),
+                    state =>
+                        pipe(
+                            state.connectionInProgress,
+                            array.sequence(option),
+                            Option.fold(constant(identity), ([start, end]) =>
                                 flow(
                                     connectionInProgress.set(
                                         connectionInProgressMonoid.empty
                                     ),
-                                    nodeById(id)
+                                    nodeById(end.nodeId)
                                         .compose(connections)
-                                        .modify(tryUpdateAt(index, some(end)))
+                                        .modify(
+                                            tryUpdateAt(end.index, some(start))
+                                        )
                                 )
-                        )
-                    )(state)
-                })
+                            )
+                        )(state)
+                )
 
                 const setState = pipe(
                     editorProfunctorState,
                     Option.map(s => s.setState)
                 )
 
-                return () => pipe(setState, Option.ap(setter))
+                return () => pipe(setState, Option.ap(Option.some(setter)))
             })
 
             return (
-                <Fragment>
-                    <circle
-                        r={shape.pinRadius}
-                        cx={x}
-                        cy={y}
-                        fill={fill}
-                        onClick={handleClick}
-                    ></circle>
+                <circle
+                    r={shape.pinRadius}
+                    cx={x}
+                    cy={y}
+                    fill={fill}
+                    onClick={handleClick}
+                >
                     <title>{pin.label}</title>
-                </Fragment>
+                </circle>
             )
         }
     )
