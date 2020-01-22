@@ -1,8 +1,9 @@
 import { array } from 'fp-ts/es6/Array'
-import { constant, flow, identity } from 'fp-ts/es6/function'
+import { constant, Endomorphism, flow, identity } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
 import { option, some } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
+import * as Reader from 'fp-ts/es6/Reader'
 import { h } from 'preact'
 import { memo } from 'preact/compat'
 import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
@@ -13,6 +14,7 @@ import { calculatePinPosition } from '../helpers/calculatePinPosition'
 import { connectionInProgress, nodeById } from '../lenses/editorState'
 import { connections } from '../lenses/vNodeState'
 import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
+import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
 import { PinTemplate } from '../types/VNodeTemplate'
 
@@ -48,22 +50,24 @@ const Pin = (type: pinTypes) =>
 
             const editorProfunctorState = useEditor()
 
-            const handleClick = useEffectufulCallback(() => {
-                const setter = flow(
-                    connectionInProgress.modify(
-                        tryUpdateAt(
-                            type,
-                            Option.some({
-                                index,
-                                nodeId: id
-                            })
-                        )
-                    ),
-                    state =>
-                        pipe(
-                            state.connectionInProgress,
-                            array.sequence(option),
-                            Option.fold(constant(identity), ([start, end]) =>
+            const setter = flow(
+                connectionInProgress.modify(
+                    tryUpdateAt(
+                        type,
+                        Option.some({
+                            index,
+                            nodeId: id
+                        })
+                    )
+                ),
+                pipe(
+                    Reader.ask<EditorState>(),
+                    Reader.map(state => state.connectionInProgress),
+                    Reader.map(array.sequence(option)),
+                    Reader.chain(
+                        Option.fold(
+                            constant<Endomorphism<EditorState>>(identity),
+                            ([start, end]) =>
                                 flow(
                                     connectionInProgress.set(
                                         connectionInProgressMonoid.empty
@@ -74,10 +78,12 @@ const Pin = (type: pinTypes) =>
                                             tryUpdateAt(end.index, some(start))
                                         )
                                 )
-                            )
-                        )(state)
+                        )
+                    )
                 )
+            )
 
+            const handleClick = useEffectufulCallback(() => {
                 const setState = pipe(
                     editorProfunctorState,
                     Option.map(s => s.setState)
