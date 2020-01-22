@@ -6,21 +6,25 @@ import * as Reader from 'fp-ts/es6/Reader'
 import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
 import { connectionInProgress, nodeById } from '../lenses/editorState'
 import { connections } from '../lenses/vNodeState'
-import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
 import { ConnectionInProgress } from '../types/ConnectionInProgress'
 import { EditorState } from '../types/EditorState'
 import { VPinPointer } from '../types/VPinPointer'
+import { pipe } from 'fp-ts/es6/pipeable'
+import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
 
-const updateInputPin = Option.fold(
-    constant<Endomorphism<EditorState>>(identity),
-    ([start, end]) =>
-        flow(
-            connectionInProgress.set(connectionInProgressMonoid.empty),
-            nodeById(end.nodeId)
-                .compose(connections)
-                .modify(tryUpdateAt(end.index, some(start)))
+const updateInputPin = (state: EditorState) =>
+    pipe(
+        state.connectionInProgress,
+        array.sequence(option),
+        Option.fold(constant(constant(state)), ([start, end]: VPinPointer[]) =>
+            flow(
+                connectionInProgress.set(connectionInProgressMonoid.empty),
+                nodeById(end.id)
+                    .compose(connections)
+                    .modify(tryUpdateAt(end.index, some(start)))
+            )
         )
-)
+    )
 
 const setConnectionPointer = (
     opts: VPinPointer
@@ -31,7 +35,5 @@ const setConnectionPointer = (
 export const connectPins = flow(
     setConnectionPointer,
     connectionInProgress.asSetter().modify,
-    Reader.map(state => state.connectionInProgress),
-    Reader.map(array.sequence(option)),
     Reader.chain(updateInputPin)
 )

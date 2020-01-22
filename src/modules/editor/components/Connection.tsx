@@ -32,11 +32,11 @@ const calculateAbsolutePinPosition = (
 export const Connection = ({ state, end, index: endIndex }: Props) => {
     return pipe(
         end.connections[endIndex],
-        Option.map(({ nodeId, index: startIndex }) => {
+        Option.map(({ id, index: startIndex }) => {
             const [x1, y1] = calculateAbsolutePinPosition(
                 startIndex,
                 pinTypes.output,
-                nodeById(nodeId).get(state)
+                nodeById(id).get(state)
             )
 
             const [x2, y2] = calculateAbsolutePinPosition(
