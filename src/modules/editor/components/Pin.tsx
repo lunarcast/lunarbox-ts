@@ -1,27 +1,29 @@
-import { array } from 'fp-ts/es6/Array'
-import { constant, Endomorphism, flow, identity } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
-import { option, some } from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
-import * as Reader from 'fp-ts/es6/Reader'
 import { h } from 'preact'
 import { memo } from 'preact/compat'
-import { tryUpdateAt } from '../../fp/array/helpers/tryUpdateAt'
 import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
 import { pinTypes } from '../constants'
 import { useEditor } from '../contexts/editor'
 import { calculatePinPosition } from '../helpers/calculatePinPosition'
-import { connectionInProgress, nodeById } from '../lenses/editorState'
-import { connections } from '../lenses/vNodeState'
-import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
-import { EditorState } from '../types/EditorState'
+import { connectPins } from '../helpers/connectPins'
 import { VNodeState } from '../types/VNodeState'
-import { PinTemplate } from '../types/VNodeTemplate'
+import { PinTemplate, NodeMaterial } from '../types/VNodeTemplate'
 
 interface Props {
     pin: PinTemplate
     index: number
     state: VNodeState
+}
+
+/**
+ * Used to get the correct fill color of a pin
+ *
+ * @param selected Specifies if node the pin belongs to is currently selected.
+ * @param material Material the node is made out of
+ */
+function pinFill(selected: boolean, material: NodeMaterial) {
+    return selected ? material.stroke.active : material.stroke.normal
 }
 
 /**
@@ -36,11 +38,8 @@ const Pin = (type: pinTypes) =>
             pin,
             state: { id, template, transform, selected }
         }: Props) => {
-            const { material, shape } = template
+            const fill = pinFill(selected, template.material)
 
-            const fill = selected
-                ? material.stroke.active
-                : material.stroke.normal
             const [x, y] = calculatePinPosition(
                 index,
                 type,
@@ -50,51 +49,20 @@ const Pin = (type: pinTypes) =>
 
             const editorProfunctorState = useEditor()
 
-            const setter = flow(
-                connectionInProgress.modify(
-                    tryUpdateAt(
-                        type,
-                        Option.some({
-                            index,
-                            nodeId: id
-                        })
-                    )
-                ),
-                pipe(
-                    Reader.ask<EditorState>(),
-                    Reader.map(state => state.connectionInProgress),
-                    Reader.map(array.sequence(option)),
-                    Reader.chain(
-                        Option.fold(
-                            constant<Endomorphism<EditorState>>(identity),
-                            ([start, end]) =>
-                                flow(
-                                    connectionInProgress.set(
-                                        connectionInProgressMonoid.empty
-                                    ),
-                                    nodeById(end.nodeId)
-                                        .compose(connections)
-                                        .modify(
-                                            tryUpdateAt(end.index, some(start))
-                                        )
-                                )
-                        )
-                    )
-                )
-            )
-
             const handleClick = useEffectufulCallback(() => {
                 const setState = pipe(
                     editorProfunctorState,
                     Option.map(s => s.setState)
                 )
 
-                return () => pipe(setState, Option.ap(Option.some(setter)))
+                const setter = Option.some(connectPins({ type, index, id }))
+
+                return () => pipe(setState, Option.ap(setter))
             })
 
             return (
                 <circle
-                    r={shape.pinRadius}
+                    r={template.shape.pinRadius}
                     cx={x}
                     cy={y}
                     fill={fill}

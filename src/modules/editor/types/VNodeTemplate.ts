@@ -6,6 +6,19 @@ export type PinTemplate = {
 }
 
 /**
+ * Template for visual aspects of the node.
+ */
+export interface NodeMaterial {
+    stroke: {
+        normal: string
+        active: string
+    }
+    opacity: number
+    fill: string
+    pinLabelFIll: string
+}
+
+/**
  * Template for different built in nodes.
  */
 export interface VNodeTemplate {
@@ -15,15 +28,7 @@ export interface VNodeTemplate {
         fill: string
         description: string
     }
-    material: {
-        stroke: {
-            normal: string
-            active: string
-        }
-        opacity: number
-        fill: string
-        pinLabelFIll: string
-    }
+    material: NodeMaterial
     shape: {
         strokeWidth: number
         borderRadius: number
