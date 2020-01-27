@@ -1,14 +1,15 @@
+import { constant, flow, Endomorphism } from 'fp-ts/es6/function'
+import * as IO from 'fp-ts/es6/IO'
 import * as Option from 'fp-ts/es6/Option'
-import { pipe } from 'fp-ts/es6/pipeable'
 import { h } from 'preact'
 import { memo } from 'preact/compat'
-import { useEffectufulCallback } from '../../fp/hooks/useEffectufulCallback'
 import { pinTypes } from '../constants'
 import { useEditor } from '../contexts/editor'
 import { calculatePinPosition } from '../helpers/calculatePinPosition'
 import { connectPins } from '../helpers/connectPins'
 import { VNodeState } from '../types/VNodeState'
-import { PinTemplate, NodeMaterial } from '../types/VNodeTemplate'
+import { NodeMaterial, PinTemplate } from '../types/VNodeTemplate'
+import { EditorState } from '../types/EditorState'
 
 interface Props {
     pin: PinTemplate
@@ -48,17 +49,17 @@ const Pin = (type: pinTypes) =>
             )
 
             const editorProfunctorState = useEditor()
-
-            const handleClick = useEffectufulCallback(() => {
-                const setState = pipe(
-                    editorProfunctorState,
-                    Option.map(s => s.setState)
-                )
-
-                const setter = Option.some(connectPins({ type, index, id }))
-
-                return () => pipe(setState, Option.ap(setter))
+            const pinConnecter: Endomorphism<EditorState> = connectPins({
+                type,
+                index,
+                id
             })
+
+            const handleClick: IO.IO<Option.Option<void>> = flow(
+                constant(editorProfunctorState),
+                Option.map(s => s.setState),
+                Option.ap(Option.some(pinConnecter))
+            )
 
             return (
                 <circle

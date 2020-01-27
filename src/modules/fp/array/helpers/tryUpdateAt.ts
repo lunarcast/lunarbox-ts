@@ -1,5 +1,5 @@
 import * as Array from 'fp-ts/es6/Array'
-import { constant } from 'fp-ts/es6/function'
+import { constant, Endomorphism } from 'fp-ts/es6/function'
 import * as Option from 'fp-ts/es6/Option'
 
 /**
@@ -8,5 +8,8 @@ import * as Option from 'fp-ts/es6/Option'
  * @param i The index the update at
  * @param v The value to put in the index.
  */
-export const tryUpdateAt = <T>(i: number, v: T) => (arr: T[]) =>
+export const trySetAt = <T>(i: number, v: T) => (arr: T[]) =>
     Option.getOrElse(constant(arr))(Array.updateAt(i, v)(arr))
+
+export const tryModifyAt = <T>(i: number, v: Endomorphism<T>) => (arr: T[]) =>
+    Option.getOrElse(constant(arr))(Array.modifyAt(i, v)(arr))
