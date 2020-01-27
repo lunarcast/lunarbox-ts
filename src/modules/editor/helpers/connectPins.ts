@@ -12,19 +12,22 @@ import { VPinPointer } from '../types/VPinPointer'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { connectionInProgressMonoid } from '../monoids/connectionInProgress'
 
-const updateInputPin = (state: EditorState) =>
-    pipe(
+const updateInputPin = (state: EditorState) => {
+    return pipe(
         state.connectionInProgress,
         array.sequence(option),
-        Option.fold(constant(constant(state)), ([start, end]: VPinPointer[]) =>
-            flow(
-                connectionInProgress.set(connectionInProgressMonoid.empty),
-                nodeById(end.id)
-                    .compose(connections)
-                    .modify(tryUpdateAt(end.index, some(start)))
-            )
+        Option.fold(
+            () => constant(state),
+            ([start, end]) =>
+                flow(
+                    connectionInProgress.set(connectionInProgressMonoid.empty),
+                    nodeById(end.id)
+                        .compose(connections)
+                        .modify(tryUpdateAt(end.index, some(start)))
+                )
         )
     )
+}
 
 const setConnectionPointer = (
     opts: VPinPointer
