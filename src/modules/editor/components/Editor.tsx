@@ -150,15 +150,15 @@ export const Editor = () => {
     const children = [
         ...pipe(
             nodes,
-            Array.map(node => {
-                return <Node state={node} key={node.id} />
-            })
-        ),
-        ...pipe(
-            nodes,
             Array.map(({ id }) => (
                 <NodeConnections state={state} id={id} key={id} />
             ))
+        ),
+        ...pipe(
+            nodes,
+            Array.map(node => {
+                return <Node state={node} key={node.id} />
+            })
         )
     ]
 
