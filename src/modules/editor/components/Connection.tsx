@@ -1,12 +1,13 @@
 import { add2 } from '@thi.ng/vectors'
 import * as Option from 'fp-ts/es6/Option'
 import { pipe } from 'fp-ts/es6/pipeable'
-import { h } from 'preact'
+import { h, Fragment } from 'preact'
 import { pinTypes } from '../constants'
 import { calculatePinPosition } from '../helpers/calculatePinPosition'
 import { nodeById } from '../lenses/editorState'
 import { EditorState } from '../types/EditorState'
 import { VNodeState } from '../types/VNodeState'
+import { pinFill } from '../helpers/pinFill'
 
 interface Props {
     state: EditorState
@@ -33,10 +34,12 @@ export const Connection = ({ state, end, index: endIndex }: Props) => {
     return pipe(
         end.connections[endIndex],
         Option.map(({ id, index: startIndex }) => {
+            const connectionStartState = nodeById(id).get(state)
+
             const [x1, y1] = calculateAbsolutePinPosition(
                 startIndex,
                 pinTypes.output,
-                nodeById(id).get(state)
+                connectionStartState
             )
 
             const [x2, y2] = calculateAbsolutePinPosition(
@@ -45,8 +48,16 @@ export const Connection = ({ state, end, index: endIndex }: Props) => {
                 end
             )
 
+            const radius = end.template.shape.pinRadius
+
             return (
-                <line width="2px" stroke="blue" {...{ x1, x2, y1, y2 }}></line>
+                <line
+                    strokeOpacity={0.75}
+                    strokeWidth={radius}
+                    strokeLinecap="round"
+                    stroke={end.template.material.stroke.normal}
+                    {...{ x1, x2, y1, y2 }}
+                />
             )
         }),
 

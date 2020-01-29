@@ -8,23 +8,14 @@ import { useEditor } from '../contexts/editor'
 import { calculatePinPosition } from '../helpers/calculatePinPosition'
 import { connectPins } from '../helpers/connectPins'
 import { VNodeState } from '../types/VNodeState'
-import { NodeMaterial, PinTemplate } from '../types/VNodeTemplate'
+import { PinTemplate } from '../types/VNodeTemplate'
 import { EditorState } from '../types/EditorState'
+import { pinFill } from '../helpers/pinFill'
 
 interface Props {
     pin: PinTemplate
     index: number
     state: VNodeState
-}
-
-/**
- * Used to get the correct fill color of a pin
- *
- * @param selected Specifies if node the pin belongs to is currently selected.
- * @param material Material the node is made out of
- */
-function pinFill(selected: boolean, material: NodeMaterial) {
-    return selected ? material.stroke.active : material.stroke.normal
 }
 
 /**
