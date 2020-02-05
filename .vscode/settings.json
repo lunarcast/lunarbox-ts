@@ -25,6 +25,7 @@
         "semigroup",
         "stateful",
         "struct",
+        "toolbelt",
         "typesafe",
         "unselectable",
         "use",

@@ -6,6 +6,5 @@ import { LabelCode, LabelT, Label } from '../types/Labels'
  *
  * @param type The type to create the function for.
  */
-export const isOfLabel = <T extends LabelCode>(type: T): LabelT['guard'] => (
-    input: Label
-) => input[0] === type
+export const isOfLabel = <T extends LabelCode>(type: T) => (input: Label) =>
+    input[0] === type

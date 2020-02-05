@@ -1,4 +1,5 @@
 import { Predicate } from 'fp-ts/es6/function'
+import { MaybeReversible } from '../../fp/types/MaybeReversible'
 
 export enum LabelCode {
     number,
@@ -11,9 +12,8 @@ export enum LabelCode {
 export type Label<T extends LabelCode = LabelCode> = [T, ...Label[]]
 
 export type LabelT<T extends Label = Label, O extends Label = Label> = {
-    guard: Predicate<T>
     transform: (v: LabelValue<T>) => LabelValue<O>
-    outputLabel: (v: T) => O
+    typeGuards: MaybeReversible<T, O>
 }
 
 export type LabelValue<T extends Label> = {

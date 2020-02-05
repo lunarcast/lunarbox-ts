@@ -1,5 +1,6 @@
 import { Either } from 'fp-ts/es6/Either'
-import { LabelCode, Label } from './Labels'
+import { Object } from 'ts-toolbelt'
+import { Label } from './Labels'
 
 /**
  * Enum containing all possible errors which could occur
@@ -28,9 +29,8 @@ export type LabelValidationFailureReasonToType<
  */
 export type LabelValidationError<
     T extends LabelValidationFailureReasons = LabelValidationFailureReasons
-> = {
-    reason: T
-} & LabelValidationFailureReasonToType<T>
+> = Object.Update<LabelValidationFailureReasonToType<T>, 'reason', T>
+
 /**
  * Result of any label validation.
  */
