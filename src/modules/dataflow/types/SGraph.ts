@@ -1,15 +1,12 @@
-import { Stream } from '@thi.ng/rstream'
 import { IO } from 'fp-ts/es6/IO'
-import { Label, SVariableInstance } from '../../typeChecking/types/Labels'
+import { Label, LabelT } from '../../typeChecking/types/Labels'
 
 /**
  * Currently supported node kinds.
  */
 export enum SNodeKinds {
-    general,
-    input,
-    output,
-    unique
+    normal,
+    constant
 }
 
 /**
@@ -45,75 +42,21 @@ export type SInputPin = {
      * Possible connection to another pin.
      */
     connection: SConnection
-
-    /**
-     * Predicate to validate incoming types.
-     */
-    labelConstraint: (type: Label) => boolean
-
-    /**
-     * For friendlier errors.
-     */
-    labelName: string
-
-    /**
-     * Id for the pin
-     */
-    id: number
-}
-
-/**
- * Output pin for all SNoes.
- */
-export type SOutputPin = {
-    /**
-     * Method to compute the output type based on the input ones.
-     */
-    computeOutputLabel: (inputTypes: Label[]) => Label
-
-    /**
-     * Stream pushing the latest values.
-     */
-    source: Stream<SVariableInstance>
 }
 
 /**
  * Node of the any Simulation graphs.
  */
-export interface SNode {
-    /**
-     * Function which takes the resolved inputs
-     * and returns the values for the outputs.
-     *
-     * @param inputs The inputs to process
-     * @returns The outputs of the node.
-     */
-    transformation: (inputs: SVariableInstance[]) => SVariableInstance[]
-
-    /**
-     * Array of input pins.
-     */
-    inputs: SInputPin[]
-
-    /**
-     * Array of output pins.
-     */
-    outputs: SOutputPin[]
-
-    /**
-     * Specifies what type of node this is.
-     */
+export interface SNode<T extends Label = Label, U extends Label = Label> {
+    input: SConnection
+    labelTransformer: LabelT<T, U>
     kind: SNodeKinds
+    id: number
 }
 
 /**
  * Convert node type to an actual node
  */
 export type SNodeOfKind<T extends SNodeKinds> = SNode & {
-    kind: {
-        [SNodeKinds.general]: SNodeKinds.general
-        [SNodeKinds.input]: SNodeKinds.input
-        [SNodeKinds.output]: SNodeKinds.output
-        [SNodeKinds.unique]: SNodeKinds.unique
-    }[T]
+    kind: T
 }

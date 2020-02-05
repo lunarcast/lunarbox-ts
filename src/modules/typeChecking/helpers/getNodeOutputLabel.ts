@@ -1,11 +1,8 @@
-import * as Array from 'fp-ts/es6/Array'
 import * as Either from 'fp-ts/es6/Either'
 import { pipe } from 'fp-ts/es6/pipeable'
 import { SConnection } from '../../dataflow/types/SGraph'
 import { LabelValidationResult } from '../types/Errors'
-import { getConnectionStart } from './getConnectionStart'
-import { getInputPinLabels } from './getInputPinLabels'
-
+import { getNodeInputPinLabel } from './getNodeInputLabel'
 /**
  * Infers the label for any output pin.
  *
@@ -14,16 +11,15 @@ import { getInputPinLabels } from './getInputPinLabels'
  * @param connection The connection pointing to the pin to get the label of.
  * @param visitedInputs Optional set of inputs already visited. Used to prevent infinite recursion.
  */
-export const getOutputPinLabel = (
+export const getNodeOutputLabel = (
     connection: SConnection,
     visitedInputs: Set<number>
 ): LabelValidationResult => {
-    const start = getConnectionStart(connection)
-    const startInputLabels = getInputPinLabels(connection.node(), visitedInputs)
-
-    return pipe(
-        startInputLabels,
-        Array.array.sequence(Either.either),
-        Either.map(start.computeOutputLabel)
+    const start = connection.node()
+    const startInputLabel = getNodeInputPinLabel(
+        connection.node(),
+        visitedInputs
     )
+
+    return pipe(startInputLabel, Either.map(start.labelTransformer.outputLabel))
 }

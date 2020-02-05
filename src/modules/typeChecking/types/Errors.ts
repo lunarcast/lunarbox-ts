@@ -1,5 +1,5 @@
 import { Either } from 'fp-ts/es6/Either'
-import { Label } from './Labels'
+import { LabelCode, Label } from './Labels'
 
 /**
  * Enum containing all possible errors which could occur
@@ -18,7 +18,7 @@ export type LabelValidationFailureReasonToType<
 > = {
     [LabelValidationFailureReasons.typeMismatch]: {
         expected: string
-        found: Label
+        found: string
     }
     [LabelValidationFailureReasons.unknownType]: {}
 }[T]
@@ -28,12 +28,9 @@ export type LabelValidationFailureReasonToType<
  */
 export type LabelValidationError<
     T extends LabelValidationFailureReasons = LabelValidationFailureReasons
-> =
-    | ({
-          reason: T
-      } & LabelValidationFailureReasonToType<T>)
-    | LabelValidationError<T>[]
-
+> = {
+    reason: T
+} & LabelValidationFailureReasonToType<T>
 /**
  * Result of any label validation.
  */

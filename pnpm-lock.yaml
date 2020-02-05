@@ -8,6 +8,7 @@ dependencies:
   fp-ts: 2.3.1
   monocle-ts: 2.0.1_fp-ts@2.3.1
   preact: 10.2.1
+  ts-toolbelt: 6.1.13
 devDependencies:
   '@babel/core': 7.8.3
   '@babel/plugin-proposal-class-properties': 7.8.3_@babel+core@7.8.3
@@ -5641,6 +5642,10 @@ packages:
       node: '>=0.8'
     resolution:
       integrity: sha512-Q5srk/4vDM54WJsJio3XNn6K2sCG+CQ8G5Wz6bZhRZoAe/+TxjWB/GlFAnYEbkYVlON9FMk/fE3h2RLpPXo4lQ==
+  /ts-toolbelt/6.1.13:
+    dev: false
+    resolution:
+      integrity: sha512-xfhXvHNMg9i0+L9aALC5kU+/H1eaLl5yydMe6m+2Danmfw/sIX+ixF7JTP4XSQRaG+Xd1idoTmcCVI0QmqZllQ==
   /tslib/1.10.0:
     dev: true
     resolution:
@@ -6196,6 +6201,7 @@ specifiers:
   monocle-ts: ^2.0.1
   preact: ^10.2.1
   source-map-loader: ^0.2.4
+  ts-toolbelt: ^6.1.13
   typescript: ^3.7.4
   utility-types: ^3.10.0
   webpack: ^4.41.5

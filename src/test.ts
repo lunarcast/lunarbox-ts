@@ -3,7 +3,7 @@ import { initGraph } from './modules/dataflow/helpers/initGraph'
 import { SNode, SNodeKinds } from './modules/dataflow/types/SGraph'
 import { isOfLabel } from './modules/typeChecking/helpers/isOfLabel'
 import {
-    Label,
+    LabelCode,
     SNumber,
     SVariableInstance
 } from './modules/typeChecking/types/Labels'
@@ -32,18 +32,18 @@ const constantNode = <T extends SVariableInstance>(
 }
 
 const [a, sourceA] = constantNode({
-    type: Label.number,
+    type: LabelCode.number,
     value: 1
 })
 
 const [b, sourceB] = constantNode({
-    type: Label.number,
+    type: LabelCode.number,
     value: 2
 })
 
 const adderSource = stream<SNumber>(s =>
     s.next({
-        type: Label.number,
+        type: LabelCode.number,
         value: 0
     })
 )
@@ -56,7 +56,7 @@ const adder: SNode = {
                 node: () => a,
                 index: 0
             },
-            labelConstraint: isOfLabel(Label.boolean),
+            labelConstraint: isOfLabel(LabelCode.boolean),
             labelName: 'number',
             id: 0
         },
@@ -65,7 +65,7 @@ const adder: SNode = {
                 node: () => adder,
                 index: 0
             },
-            labelConstraint: isOfLabel(Label.number),
+            labelConstraint: isOfLabel(LabelCode.number),
             labelName: 'number',
             id: 1
         }
@@ -73,14 +73,14 @@ const adder: SNode = {
     outputs: [
         {
             source: adderSource,
-            computeOutputLabel: ([a, b]) => (a === b ? a : Label.void)
+            computeOutputLabel: ([a, b]) => (a === b ? a : LabelCode.void)
         }
     ],
     transformation: inputs => [
         {
-            type: Label.number,
+            type: LabelCode.number,
             value: inputs.reduce((a, b) => {
-                if (b.type !== Label.number) {
+                if (b.type !== LabelCode.number) {
                     throw new Error('something went wrong')
                 }
 
@@ -115,5 +115,5 @@ initGraph(graph)
 
 sourceA.next({
     value: 1,
-    type: Label.number
+    type: LabelCode.number
 })

@@ -1,5 +1,5 @@
 import { stream } from '@thi.ng/rstream'
-import { Label } from '../typeChecking/types/Labels'
+import { LabelCode } from '../typeChecking/types/Labels'
 import { SNode, SNodeKinds } from './types/SGraph'
 
 /**
@@ -11,7 +11,7 @@ export const voidNode: SNode = {
     transformation: () => [],
     outputs: [
         {
-            computeOutputLabel: () => Label.void,
+            computeOutputLabel: () => LabelCode.void,
             source: stream()
         }
     ]
