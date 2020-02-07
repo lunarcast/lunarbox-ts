@@ -39,5 +39,3 @@ export const validateNode = (node: SNode): LabelValidationResult => {
         })
     )
 }
-
-export const getNodeInputType = () => {}

@@ -9,8 +9,13 @@ export enum LabelCode {
 }
 
 export type Label<T extends LabelCode = LabelCode> = [T, ...Label[]]
+export type ArrowLabel<A extends Label, B extends Label> = [
+    LabelCode.arrow,
+    A,
+    B
+]
 
-export type LabelT<A extends Label = Label, B extends Label = Label> = {
+export type LabelT<A extends Label, B extends Label> = {
     mapValue: (v: LabelValue<A>) => LabelValue<B>
     mapLabel: (v: A) => Option<B>
 }
