@@ -1,4 +1,4 @@
 import { h, render } from 'preact'
-import { Editor } from './modules/editor/components/Editor'
+import { App } from './modules/core/components/App'
 
-render(<Editor />, document.body)
+render(<App />, document.body)

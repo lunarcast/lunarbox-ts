@@ -1,40 +1,29 @@
-// Labels are basically vpt types
-// We might have more types than just primitives
-export enum Label {
+import { Option } from 'fp-ts/es6/Option'
+
+export enum LabelCode {
     number,
     string,
-    boolean,
-    void
+    void,
+    arrow,
+    unknown
 }
 
-// Base type for all variables
-export type SVariable<T extends Label = Label, U extends unknown = unknown> = {
-    type: T
-    value: U
+export type Label<T extends LabelCode = LabelCode> = [T, ...Label[]]
+export type ArrowLabel<A extends Label, B extends Label> = [
+    LabelCode.arrow,
+    A,
+    B
+]
+
+export type LabelT<A extends Label, B extends Label> = {
+    mapValue: (v: LabelValue<A>) => LabelValue<B>
+    mapLabel: (v: A) => Option<B>
 }
 
-/**
- * Convert label to inner type
- */
-export type LabelToType<T extends Label> = {
-    [Label.number]: number
-    [Label.boolean]: boolean
-    [Label.string]: string
-    [Label.void]: null
-}[T]
-
-/**
- * Convert label to variable type
- */
-export type LabelToSVariable<T extends Label> = SVariable<T, LabelToType<T>>
-
-export type SNumber = LabelToSVariable<Label.number>
-export type SString = LabelToSVariable<Label.string>
-export type SBoolean = LabelToSVariable<Label.boolean>
-export type SVoid = LabelToSVariable<Label.void>
-
-// Primitives can be either of those 3
-export type SPrimitive = SNumber | SString | SBoolean
-
-// We might add more than just primitives later so we create an alias for this
-export type SVariableInstance = SPrimitive
+export type LabelValue<T extends Label> = {
+    [LabelCode.number]: number
+    [LabelCode.string]: string
+    [LabelCode.void]: null
+    [LabelCode.unknown]: null
+    [LabelCode.arrow]: LabelT<T[1], T[2]>
+}[T[0]]

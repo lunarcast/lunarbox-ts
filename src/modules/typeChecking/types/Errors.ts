@@ -1,4 +1,5 @@
 import { Either } from 'fp-ts/es6/Either'
+import { Object } from 'ts-toolbelt'
 import { Label } from './Labels'
 
 /**
@@ -18,7 +19,7 @@ export type LabelValidationFailureReasonToType<
 > = {
     [LabelValidationFailureReasons.typeMismatch]: {
         expected: string
-        found: Label
+        found: string
     }
     [LabelValidationFailureReasons.unknownType]: {}
 }[T]
@@ -28,13 +29,12 @@ export type LabelValidationFailureReasonToType<
  */
 export type LabelValidationError<
     T extends LabelValidationFailureReasons = LabelValidationFailureReasons
-> =
-    | ({
-          reason: T
-      } & LabelValidationFailureReasonToType<T>)
-    | LabelValidationError<T>[]
+> = Object.Update<LabelValidationFailureReasonToType<T>, 'reason', T>
 
 /**
  * Result of any label validation.
  */
-export type LabelValidationResult = Either<LabelValidationError, Label>
+export type LabelValidationResult<T extends Label = Label> = Either<
+    LabelValidationError,
+    T
+>

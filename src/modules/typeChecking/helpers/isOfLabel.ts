@@ -1,4 +1,4 @@
-import { Label } from '../types/Labels'
+import { LabelCode, LabelT, Label } from '../types/Labels'
 
 /**
  * Takes in a label and creates a function which
@@ -6,5 +6,5 @@ import { Label } from '../types/Labels'
  *
  * @param type The type to create the function for.
  */
-export const isOfLabel = <T extends Label>(type: T) => (input: Label) =>
-    input === type
+export const isOfLabel = <T extends LabelCode>(type: T) => (input: Label) =>
+    input[0] === type
