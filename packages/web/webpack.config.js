@@ -43,7 +43,12 @@ module.exports = {
             react: 'preact/compat',
             'react-dom/test-utils': 'preact/test-utils',
             'react-dom': 'preact/compat'
-        }
+        },
+        modules: [
+            resolve(__dirname, 'node_modules'),
+            resolve(__dirname, '../../node_modules'),
+            'node_modules'
+        ]
     },
     module: {
         rules: [
