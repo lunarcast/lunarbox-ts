@@ -1,29 +1,24 @@
 import * as Either from 'fp-ts/es6/Either'
 import { pipe } from 'fp-ts/es6/pipeable'
-import { SNode, SNodeKinds } from '../../dataflow/types/SGraph'
+import { SNode, fold } from '../../dataflow/types/SNode'
 import {
     LabelValidationFailureReasons,
     LabelValidationResult
 } from '../types/Errors'
 import { createLabelValidationError } from './createLabelValidationError'
-import { LabelCode } from '../types/Labels'
+import { LabelCode, Label, LabelT } from '../types/Labels'
+import { A } from 'ts-toolbelt'
+import { getNodeValue } from '../../dataflow/helpers/getNodeValue'
 
-export const validateNode = (node: SNode): LabelValidationResult => {
-    if (node.kind === SNodeKinds.constant) {
-        return pipe(
-            node.labelTransformer.mapLabel([LabelCode.void]),
-            Either.fromOption(() => ({
-                reason: LabelValidationFailureReasons.unknownType
-            }))
-        )
-    }
-
+const validateArrow = <A extends Label, B extends Label>(
+    arrow: LabelT<A, B>['mapLabel'],
+    input: SNode<Label, A>
+): LabelValidationResult<B> => {
     return pipe(
-        node.input(),
+        input,
         validateNode,
         Either.chain(type => {
-            const outputLabel = node.labelTransformer.mapLabel(type)
-
+            const outputLabel = arrow(type)
             // TODO: make this use actual values.
             const error = createLabelValidationError(
                 LabelValidationFailureReasons.typeMismatch
@@ -31,11 +26,35 @@ export const validateNode = (node: SNode): LabelValidationResult => {
                 expected: '',
                 found: ''
             })
-
             return pipe(
                 outputLabel,
                 Either.fromOption(() => error)
             )
         })
+    )
+}
+
+export const validateNode = <A extends Label, B extends Label>(
+    node: SNode<A, B>
+): LabelValidationResult<B> => {
+    return pipe(
+        node,
+        fold(
+            (arrow, input) => {
+                return validateArrow(arrow.mapLabel, input())
+            },
+            (_, l) => Either.right(l),
+            (lambda, input) => {
+                const lambdaValue = getNodeValue(lambda())
+                const altLambda = validateNode(lambda())
+
+                return pipe(
+                    altLambda,
+                    Either.chain(arrow => {
+                        arrow()
+                    })
+                )
+            }
+        )
     )
 }

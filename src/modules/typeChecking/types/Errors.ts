@@ -34,4 +34,7 @@ export type LabelValidationError<
 /**
  * Result of any label validation.
  */
-export type LabelValidationResult = Either<LabelValidationError, Label>
+export type LabelValidationResult<T extends Label = Label> = Either<
+    LabelValidationError,
+    T
+>

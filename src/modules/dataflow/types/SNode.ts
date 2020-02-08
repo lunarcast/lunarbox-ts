@@ -27,6 +27,7 @@ export type SNode<A extends Label, B extends Label> =
     | {
           readonly type: 'SConstant'
           readonly value0: LabelValue<B>
+          readonly value1: B
       }
     | {
           readonly type: 'SPipe'
@@ -42,9 +43,10 @@ export function sArrow<A extends Label, B extends Label>(
 }
 
 export function sConstant<A extends Label, B extends Label>(
-    value0: LabelValue<B>
+    value0: LabelValue<B>,
+    value1: B
 ): SNode<A, B> {
-    return { type: 'SConstant', value0 }
+    return { type: 'SConstant', value0, value1 }
 }
 
 export function sPipe<A extends Label, B extends Label>(
@@ -56,7 +58,7 @@ export function sPipe<A extends Label, B extends Label>(
 
 export function fold<A extends Label, B extends Label, R>(
     onSArrow: (value0: LabelT<A, B>, value1: () => SNodeWithOutput<A>) => R,
-    onSConstant: (value0: LabelValue<B>) => R,
+    onSConstant: (value0: LabelValue<B>, value1: B) => R,
     onSPipe: (
         value0: () => SNodeWithOutput<ArrowLabel<A, B>>,
         value1: () => SNodeWithOutput<A>
@@ -67,7 +69,7 @@ export function fold<A extends Label, B extends Label, R>(
             case 'SArrow':
                 return onSArrow(fa.value0, fa.value1)
             case 'SConstant':
-                return onSConstant(fa.value0)
+                return onSConstant(fa.value0, fa.value1)
             case 'SPipe':
                 return onSPipe(fa.value0, fa.value1)
         }
