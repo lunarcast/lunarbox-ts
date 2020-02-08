@@ -46,14 +46,8 @@ export const validateNode = <A extends Label, B extends Label>(
             (_, l) => Either.right(l),
             (lambda, input) => {
                 const lambdaValue = getNodeValue(lambda())
-                const altLambda = validateNode(lambda())
 
-                return pipe(
-                    altLambda,
-                    Either.chain(arrow => {
-                        arrow()
-                    })
-                )
+                return validateArrow(lambdaValue.mapLabel, input())
             }
         )
     )
