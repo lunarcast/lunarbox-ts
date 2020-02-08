@@ -18,6 +18,7 @@
         "monoid",
         "monoids",
         "pipeable",
+        "pnpm",
         "preact",
         "profunctor",
         "promap",
