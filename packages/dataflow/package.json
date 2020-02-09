@@ -1,0 +1,11 @@
+{
+    "name": "@lunarbox/dataflow",
+    "scripts": {
+        "dev": "spago build --watch",
+        "build": "spago build"
+    },
+    "devDependencies": {
+        "purty": "^4.5.2",
+        "spago": "^0.13.1"
+    }
+}
