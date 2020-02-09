@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "target": "es2020",
+        "module": "commonjs",
+        "outDir": "./dist",
+        "strict": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "baseUrl": "./"
+    },
+    "include": ["./src/**/*", "./db/**/*"],
+    "exclude": ["node_modules"]
+}

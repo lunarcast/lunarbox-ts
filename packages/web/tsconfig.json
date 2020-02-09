@@ -1,0 +1,14 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "sourceMap": true,
+        "target": "es6",
+        "baseUrl": ".",
+        "lib": ["ESNext.Array", "DOM"],
+        "module": "ESNext",
+        "allowSyntheticDefaultImports": true,
+        "jsx": "react",
+        "jsxFactory": "h"
+    },
+    "include": ["src"]
+}
