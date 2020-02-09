@@ -66,3 +66,6 @@ dist/
 
 # SQLite files
 *.sqlite3
+
+output
+dist

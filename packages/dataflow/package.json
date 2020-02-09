@@ -1,0 +1,14 @@
+{
+    "name": "@lunarbox/dataflow",
+    "version": "1.0.0",
+    "main": "src/Main.purs",
+    "types": "output/Main/index.d.ts",
+    "scripts": {
+        "build": "spago build",
+        "postbuild": "purs-tsd-gen -d output/ Main"
+    },
+    "devDependencies": {
+        "purty": "^4.5.2",
+        "spago": "^0.13.1"
+    }
+}

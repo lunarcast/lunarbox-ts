@@ -42,7 +42,9 @@ module.exports = {
         alias: {
             react: 'preact/compat',
             'react-dom/test-utils': 'preact/test-utils',
-            'react-dom': 'preact/compat'
+            'react-dom': 'preact/compat',
+            '@lunarbox/dataflow/maybe':
+                '@lunarbox/dataflow/.spago/maybe/*/src/Data/Maybe'
         },
         modules: [
             resolve(__dirname, 'node_modules'),
@@ -52,6 +54,22 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.purs$/,
+                loader: 'purs-loader',
+                exclude: /node_modules/,
+                options: {
+                    // spago: true,
+                    pscIde: dev,
+                    bundle: !dev,
+                    watch: dev,
+                    src: [
+                        // path.join('src', '**', '*.purs'),
+                        '../*/.spago/**/src/**/*.purs',
+                        '../*/src/**/*.purs'
+                    ]
+                }
+            },
             {
                 test: /\.tsx?$/,
                 use: [
