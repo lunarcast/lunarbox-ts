@@ -1,14 +1,17 @@
 {
     "compilerOptions": {
-        "sourceMap": true,
-        "target": "es6",
-        "baseUrl": ".",
-        "lib": ["ESNext.Array", "DOM"],
+        "target": "esnext",
         "module": "ESNext",
-        "moduleResolution": "node",
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "strict": true,
         "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "baseUrl": ".",
+        "lib": ["ESNext.Array", "DOM"],
         "jsx": "react",
         "jsxFactory": "h"
     },
