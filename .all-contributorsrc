@@ -20,6 +20,15 @@
         "design",
         "infra"
       ]
+    },
+    {
+      "login": "BlueGhostGH",
+      "name": "Dragomir George",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/17652623?v=4",
+      "profile": "https://github.com/BlueGhostGH",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
