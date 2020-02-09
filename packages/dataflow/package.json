@@ -2,6 +2,7 @@
     "name": "@lunarbox/dataflow",
     "version": "1.0.0",
     "main": "src/Main.purs",
+    "types": "output/Main/index.d.ts",
     "scripts": {
         "dev": "spago build --watch",
         "build": "spago build",
