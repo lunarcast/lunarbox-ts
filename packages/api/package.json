@@ -1,7 +1,7 @@
 {
     "name": "@lunarbox/api",
     "scripts": {
-        "start-dev": "node -r ts-node/register src/index.ts",
+        "start-dev": "node -r ./resgister.js src/index.ts",
         "dev": "nodemon"
     },
     "devDependencies": {
