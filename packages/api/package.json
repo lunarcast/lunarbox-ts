@@ -18,11 +18,13 @@
     "dependencies": {
         "@hapi/joi": "^17.1.0",
         "@lunarbox/dataflow": "*",
+        "knex": "^0.20.9",
         "koa": "^2.11.0",
         "koa-bodyparser": "^4.2.1",
         "koa-json": "^2.0.2",
         "koa-logger": "^3.2.1",
         "koa-router": "^8.0.7",
-        "koa-session": "^5.13.1"
+        "koa-session": "^5.13.1",
+        "pg": "^7.18.1"
     }
 }
