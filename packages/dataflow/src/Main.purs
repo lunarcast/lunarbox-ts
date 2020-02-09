@@ -1,19 +1,15 @@
 module Main where
 
 import Prelude
-import Effect (Effect)
-import Effect.Console (logShow)
-import Graph (SNode(..))
+import Data.Maybe (Maybe(..))
 
-a :: SNode Int Int
-a = Arrow (Constant 4) (\i -> i * 2)
+data SNode a b
+  = Constant b
+  | Arrow (SNode a a) (a -> b)
+  | Pipe (SNode a (Function a b)) (SNode a a)
 
-nodeValue :: forall a b. SNode a b -> b
+nodeValue :: forall a b. SNode a b -> Maybe b
 nodeValue node = case node of
-  Constant o -> o
-  Arrow i o -> o $ nodeValue i
-  Pipe i o -> nodeValue i $ nodeValue o
-
-main :: Effect Unit
-main = do
-  logShow $ nodeValue a
+  Constant o -> Just o
+  Arrow i o -> o <$> nodeValue i
+  Pipe i o -> nodeValue i <*> nodeValue o

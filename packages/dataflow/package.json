@@ -1,5 +1,6 @@
 {
     "name": "@lunarbox/dataflow",
+    "main": "src/Main.purs",
     "scripts": {
         "dev": "spago build --watch",
         "build": "spago build"
