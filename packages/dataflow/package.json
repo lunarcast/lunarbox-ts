@@ -4,7 +4,6 @@
     "main": "src/Main.purs",
     "types": "output/Main/index.d.ts",
     "scripts": {
-        "dev": "spago build --watch",
         "build": "spago build",
         "postbuild": "purs-tsd-gen -d output/ Main"
     },
