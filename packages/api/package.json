@@ -1,0 +1,8 @@
+{
+    "name": "@lunarbox/api",
+    "scripts": {},
+    "devDependencies": {},
+    "dependencies": {
+        "@lunarbox/dataflow": "*"
+    }
+}
