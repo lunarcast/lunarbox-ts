@@ -6,7 +6,7 @@
         "check": "pnpm run format && pnpm run lint",
         "build": "tsc",
         "start": "node ./dist/src/index.js",
-        "start-dev": "node -r ./resgister.js src/index.ts",
+        "start-dev": "node -r ./register.js src/index.ts",
         "dev": "nodemon"
     },
     "devDependencies": {
