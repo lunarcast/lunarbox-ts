@@ -1,5 +1,9 @@
 # Lunarbox
 
+Status: dropped
+
+I'm curently rewritting this in purescript in [this repo](https://github.com/Mateiadrielrafael/lunarbox).
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
 [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
